@@ -1,5 +1,6 @@
 package com.algaworks.algafood.api.exceptionHandler;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,8 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	
+	private static final String MSG_ERRO_USUARIO_FINAL = "Ocorreu um erro interno inesperado no sistema. Tente novamente e se o problema persistir, entre em contato com o administrador";
+
 	@ExceptionHandler(EntidadeNaoEncontradaException.class)
 	public ResponseEntity<?> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException ex, WebRequest request) {
 		
@@ -53,7 +56,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<?> handleAnyException(Exception ex, WebRequest request) {
 		
-		String detail = "Ocorreu um erro interno inesperado no sistema. Tente novamente e se o problema persistir, entre em contato com o administrador";
+		String detail = MSG_ERRO_USUARIO_FINAL;
 		
 		// Importante colocar o printStackTrace (pelo menos por enquanto, que não estamos
 		// fazendo logging) para mostrar a stacktrace no console
@@ -87,10 +90,10 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		
 		if (body == null) {
-			body = new Problem(status.value(), null, status.getReasonPhrase(), null);
+			body = new Problem(status.value(), null, status.getReasonPhrase(), null, MSG_ERRO_USUARIO_FINAL, LocalDateTime.now());
 			
 		} else if (body instanceof String) {
-			body = new Problem(status.value(), null, (String) body, null);
+			body = new Problem(status.value(), null, (String) body, null, MSG_ERRO_USUARIO_FINAL, LocalDateTime.now());
 			
 		}
 		return super.handleExceptionInternal(ex, body, headers, status, request);
@@ -107,6 +110,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	    String detail = String.format("A propriedade '%s' não existe. Corrija ou remova essa propriedade e tente novamente.", path);
 	    
 	    var problem = problemBuilder(status, problemType, detail);
+	    problem.setUserMessage(MSG_ERRO_USUARIO_FINAL);
 	    
 	    return handleExceptionInternal(ex, problem, headers, status, request);
 	}
@@ -165,6 +169,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	            path, ex.getValue(), ex.getTargetType().getSimpleName());
 	    
 	    var problem = problemBuilder(status, problemType, detail);
+	    problem.setUserMessage(MSG_ERRO_USUARIO_FINAL);
 	    
 	    return handleExceptionInternal(ex, problem, headers, status, request);
 	}
@@ -179,6 +184,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private Problem problemBuilder(HttpStatus status, ProblemType problemType, String detail) {
 		
-		return new Problem(status.value(), problemType.getUri(), problemType.getTitle(), detail);
+		return new Problem(status.value(), problemType.getUri(), problemType.getTitle(), detail, detail, LocalDateTime.now());
 	}
 }
