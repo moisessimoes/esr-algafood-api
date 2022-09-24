@@ -16,11 +16,17 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.groups.ConvertGroup;
+import javax.validation.groups.Default;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.algaworks.algafood.groups.Groups;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -30,14 +36,22 @@ public class Restaurante {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
+	//@NotNull //valida apenas se o valor é nulo ou não, mas aceita ele vazio
+	//@NotEmpty //valida se esá nulo ou vazio, mas se passar algo do tipo "  " ele aceita
+	@NotBlank
 	@Column(nullable = false)
 	private String nome;
 	
+	//@DecimalMin("1")
+	//ou
+	@PositiveOrZero
 	@Column(name = "taxa_frete", nullable = false)
 	private BigDecimal taxaFrete;
 	
 	//@JsonIgnore
+	@Valid //valida os campos do objeto cozinha em cascata
+	@ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)
+	@NotNull
 	@ManyToOne //(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cozinha_id", nullable = false)
 	private Cozinha cozinha;

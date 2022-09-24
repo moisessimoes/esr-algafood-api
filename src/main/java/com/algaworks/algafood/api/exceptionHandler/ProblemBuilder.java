@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ProblemBuilder {
 	
-	//Classe implementa o Builder Pattern para simplificar a criacoa de objeto Problem para ser exibido nos erros de API.
+	//Classe implementa o Builder Pattern para simplificar a criacao de objeto Problem para ser exibido nos erros de API.
 	
 	private Problem problem;
 	

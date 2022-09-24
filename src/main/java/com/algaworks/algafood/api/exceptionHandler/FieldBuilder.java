@@ -2,7 +2,7 @@ package com.algaworks.algafood.api.exceptionHandler;
 
 public class FieldBuilder {
 	
-	//Classe implementa o Builder Pattern para simplificar a criacoa de objeto Field para ser exibido nos erros de API.
+	//Classe implementa o Builder Pattern para simplificar a criacao de objeto Field para ser exibido nos erros de API.
 	
 	private Field field;
 	
