@@ -52,7 +52,7 @@ public class EstadoController {
 	
 	
 	@PutMapping("/{estadoId}")
-	public Estado atualizar(@PathVariable("estadoId") Long estadoId, @RequestBody Estado estado) {
+	public Estado atualizar(@PathVariable("estadoId") Long estadoId, @RequestBody @Valid Estado estado) {
 		
 		Estado state = estadoService.buscarPorId(estadoId);
 		
