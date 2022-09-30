@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.algaworks.algafood.groups.Groups;
+import com.algaworks.algafood.core.validation.Groups;
 
 @Entity
 public class Estado {
