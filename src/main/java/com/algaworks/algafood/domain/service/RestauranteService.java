@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exception.RestauranteNaoEncontradoException;
@@ -28,6 +29,7 @@ public class RestauranteService {
 	}
 	
 	
+	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
 		
 		Long cozinhaId = restaurante.getCozinha().getId();
@@ -38,10 +40,13 @@ public class RestauranteService {
 	}
 	
 	
+	@Transactional
 	public void excluir(Long restauranteId) {
 		
 		try {
 			restauranteRepository.deleteById(restauranteId);
+			//Corrigindo bug de tratamento de exception de integridade de dados com flush do JPA
+			restauranteRepository.flush();
 			
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(String.format(MSG_RESTAURANTE_EM_USO, restauranteId));

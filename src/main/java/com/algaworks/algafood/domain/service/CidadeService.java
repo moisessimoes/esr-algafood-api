@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.algaworks.algafood.domain.exception.CidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
@@ -22,6 +23,7 @@ public class CidadeService {
 	@Autowired
 	private CidadeRepository cidadeRepository;
 	
+	@Transactional
 	public Cidade salvar(Cidade cidade) {
 		
 		Long estadoId = cidade.getEstado().getId();
@@ -39,10 +41,13 @@ public class CidadeService {
 	}
 	
 	
+	@Transactional
 	public void excluir(Long cidadeId) {
 		
 		try {
 			cidadeRepository.deleteById(cidadeId);
+			//Corrigindo bug de tratamento de exception de integridade de dados com flush do JPA
+			cidadeRepository.flush();
 			
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(String.format(MSG_CIDADE_EM_USO, cidadeId));

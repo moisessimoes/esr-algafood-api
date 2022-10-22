@@ -1,7 +1,7 @@
 package com.algaworks.algafood.domain.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,16 +41,16 @@ public class Pedido {
 	
 	@CreationTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
-	private LocalDateTime dataCriacao;
+	private OffsetDateTime dataCriacao;
 	
 	@Column(columnDefinition = "datetime")
-	private LocalDateTime dataConfirmacao;
+	private OffsetDateTime dataConfirmacao;
 	
 	@Column(columnDefinition = "datetime")
-	private LocalDateTime dataCancelamento;
+	private OffsetDateTime dataCancelamento;
 	
 	@Column(columnDefinition = "datetime")
-	private LocalDateTime dataEntrega;
+	private OffsetDateTime dataEntrega;
 	
 	@OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
 	private List<ItemPedido> itens = new ArrayList<>();
@@ -75,35 +75,35 @@ public class Pedido {
 		this.id = id;
 	}
 
-	public LocalDateTime getDataCriacao() {
+	public OffsetDateTime getDataCriacao() {
 		return dataCriacao;
 	}
 
-	public void setDataCriacao(LocalDateTime dataCriacao) {
+	public void setDataCriacao(OffsetDateTime dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
 
-	public LocalDateTime getDataConfirmacao() {
+	public OffsetDateTime getDataConfirmacao() {
 		return dataConfirmacao;
 	}
 
-	public void setDataConfirmacao(LocalDateTime dataConfirmacao) {
+	public void setDataConfirmacao(OffsetDateTime dataConfirmacao) {
 		this.dataConfirmacao = dataConfirmacao;
 	}
 
-	public LocalDateTime getDataCancelamento() {
+	public OffsetDateTime getDataCancelamento() {
 		return dataCancelamento;
 	}
 
-	public void setDataCancelamento(LocalDateTime dataCancelamento) {
+	public void setDataCancelamento(OffsetDateTime dataCancelamento) {
 		this.dataCancelamento = dataCancelamento;
 	}
 
-	public LocalDateTime getDataEntrega() {
+	public OffsetDateTime getDataEntrega() {
 		return dataEntrega;
 	}
 
-	public void setDataEntrega(LocalDateTime dataEntrega) {
+	public void setDataEntrega(OffsetDateTime dataEntrega) {
 		this.dataEntrega = dataEntrega;
 	}
 

@@ -1,6 +1,6 @@
 package com.algaworks.algafood.api.exceptionHandler;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class ProblemBuilder {
@@ -37,7 +37,7 @@ public class ProblemBuilder {
 	}
 	
 	public ProblemBuilder addLocalDateTime() {
-		this.problem.setTimestamp(LocalDateTime.now());
+		this.problem.setTimestamp(OffsetDateTime.now());
 		return this;
 	}
 	

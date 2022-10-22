@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -27,6 +26,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algaworks.algafood.api.assembler.RestauranteInputDisassembler;
+import com.algaworks.algafood.api.assembler.RestauranteModelAssembler;
+import com.algaworks.algafood.api.model.RestauranteModel;
+import com.algaworks.algafood.api.model.input.RestauranteInput;
 import com.algaworks.algafood.core.validation.ValidacaoException;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
@@ -50,11 +53,18 @@ public class RestauranteController {
 	@Autowired
 	private RestauranteRepository restauranteRepository;
 	
+	@Autowired
+	private RestauranteModelAssembler restauranteModelAssembler;
+	
+	@Autowired
+	private RestauranteInputDisassembler restauranteInputDisassembler;
+	
 	@PostMapping
-	public Restaurante adicionar(@RequestBody @Valid Restaurante restaurante) {
+	public Restaurante adicionar(@RequestBody @Valid RestauranteInput restaurante) {
 		
 		try {
-			return restauranteService.salvar(restaurante);
+			Restaurante rest = restauranteInputDisassembler.toDomainObject(restaurante);
+			return restauranteService.salvar(rest);
 		} catch (EntidadeNaoEncontradaException e) {
 			throw new NegocioException(e.getMessage(), e);
 		}
@@ -62,14 +72,16 @@ public class RestauranteController {
 	
 	
 	@PutMapping("/{restauranteId}")
-	public Restaurante atualizar(@PathVariable("restauranteId") Long restauranteId, @RequestBody @Valid Restaurante restaurante) {
+	public Restaurante atualizar(@PathVariable("restauranteId") Long restauranteId, @RequestBody @Valid RestauranteInput restaurante) {
 		
 		Restaurante restauranteAtual = restauranteService.buscarPorId(restauranteId);
 		
-		String[] camposIgnorados = {"id", "formasPagamento", "endereco", "dataCadastro"};
+		restauranteInputDisassembler.copyToDomainObject(restaurante, restauranteAtual);
+		
+		//String[] camposIgnorados = {"id", "formasPagamento", "endereco", "dataCadastro"};
 		
 		//BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro");
-		BeanUtils.copyProperties(restaurante, restauranteAtual, camposIgnorados);
+		//BeanUtils.copyProperties(restaurante, restauranteAtual, camposIgnorados);
 		
 		try {
 			return restauranteService.salvar(restauranteAtual);
@@ -140,8 +152,8 @@ public class RestauranteController {
 	//===================================================================================================================================
 	
 	@GetMapping
-	public List<Restaurante> listar() {
-		return restauranteRepository.findAll();
+	public List<RestauranteModel> listar() {
+		return restauranteModelAssembler.toCollectionModel(restauranteRepository.findAll());
 	}
 	
 	
@@ -153,8 +165,8 @@ public class RestauranteController {
 	
 	
 	@GetMapping("/{restauranteId}")
-	public Restaurante buscar(@PathVariable("restauranteId") Long restauranteId) {
-		return restauranteService.buscarPorId(restauranteId);
+	public RestauranteModel buscar(@PathVariable("restauranteId") Long restauranteId) {
+		return restauranteModelAssembler.toModel(restauranteService.buscarPorId(restauranteId));
 		//return restauranteRepository.findById(restauranteId).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 	
