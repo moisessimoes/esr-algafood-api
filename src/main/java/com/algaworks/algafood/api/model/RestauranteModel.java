@@ -8,6 +8,7 @@ public class RestauranteModel {
 	private String nomeString;
 	private BigDecimal taxaFrete;
 	private CozinhaModel cozinha;
+	private Boolean ativo;
 	
 	public Long getId() {
 		return id;
@@ -32,5 +33,11 @@ public class RestauranteModel {
 	}
 	public void setCozinha(CozinhaModel cozinha) {
 		this.cozinha = cozinha;
+	}
+	public Boolean getAtivo() {
+		return ativo;
+	}
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
 	}
 }

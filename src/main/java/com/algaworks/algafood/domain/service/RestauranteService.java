@@ -41,6 +41,23 @@ public class RestauranteService {
 	
 	
 	@Transactional
+	public void ativar(Long restauranteId) {
+		
+		Restaurante restaurante = buscarPorId(restauranteId);
+		//restaurante.setAtivo(true);
+		restaurante.ativar();
+	}
+	
+	@Transactional
+	public void inativar(Long restauranteId) {
+		
+		Restaurante restaurante = buscarPorId(restauranteId);
+		//restaurante.setAtivo(false);
+		restaurante.inativar();
+	}
+	
+	
+	@Transactional
 	public void excluir(Long restauranteId) {
 		
 		try {
