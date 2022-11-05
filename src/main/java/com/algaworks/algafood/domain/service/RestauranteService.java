@@ -8,8 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exception.RestauranteNaoEncontradoException;
+import com.algaworks.algafood.domain.model.Cidade;
 import com.algaworks.algafood.domain.model.Cozinha;
+import com.algaworks.algafood.domain.model.FormaPagamento;
 import com.algaworks.algafood.domain.model.Restaurante;
+import com.algaworks.algafood.domain.model.Usuario;
 import com.algaworks.algafood.repositories.RestauranteRepository;
 
 @Service
@@ -18,10 +21,19 @@ public class RestauranteService {
 	private static final String MSG_RESTAURANTE_EM_USO = "Restaurante de código %d não pode ser removido, pois está em uso.";
 
 	@Autowired
-	private RestauranteRepository restauranteRepository;
+	private CozinhaService cozinhaService;
 	
 	@Autowired
-	private CozinhaService cozinhaService;
+	private CidadeService cidadeService;
+	
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
+	private FormaPagamentoService formaPagamentoService;
+	
+	@Autowired
+	private RestauranteRepository restauranteRepository;
 	
 	
 	public Restaurante buscarPorId(Long restauranteId) {
@@ -33,9 +45,15 @@ public class RestauranteService {
 	public Restaurante salvar(Restaurante restaurante) {
 		
 		Long cozinhaId = restaurante.getCozinha().getId();
+		Long cidadeId = restaurante.getEndereco().getCidade().getId();
+		
 		Cozinha cozinhaAssociada = cozinhaService.buscarPorId(cozinhaId);
 		
+		Cidade cidade = cidadeService.buscarPorId(cidadeId);
+		
 		restaurante.setCozinha(cozinhaAssociada);
+		restaurante.getEndereco().setCidade(cidade);
+		
 		return restauranteRepository.save(restaurante);
 	}
 	
@@ -44,7 +62,6 @@ public class RestauranteService {
 	public void ativar(Long restauranteId) {
 		
 		Restaurante restaurante = buscarPorId(restauranteId);
-		//restaurante.setAtivo(true);
 		restaurante.ativar();
 	}
 	
@@ -52,8 +69,57 @@ public class RestauranteService {
 	public void inativar(Long restauranteId) {
 		
 		Restaurante restaurante = buscarPorId(restauranteId);
-		//restaurante.setAtivo(false);
 		restaurante.inativar();
+	}
+	
+	
+	@Transactional
+	public void abrir(Long restauranteId) {
+		
+		Restaurante restaurante = buscarPorId(restauranteId);
+		restaurante.abrir();
+	}
+	
+	@Transactional
+	public void fechar(Long restauranteId) {
+		
+		Restaurante restaurante = buscarPorId(restauranteId);
+		restaurante.fechar();
+	}
+	
+	
+	@Transactional
+	public void adicionarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+		
+		Restaurante restaurante = buscarPorId(restauranteId);
+		FormaPagamento formaPagamento = formaPagamentoService.buscarPorId(formaPagamentoId);
+		restaurante.adicionarFormaPagamento(formaPagamento);
+	}
+	
+	
+	@Transactional
+	public void removerFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+		
+		Restaurante restaurante = buscarPorId(restauranteId);
+		FormaPagamento formaPagamento = formaPagamentoService.buscarPorId(formaPagamentoId);
+		restaurante.removerFormaPagamento(formaPagamento);
+	}
+	
+	
+	@Transactional
+	public void desassociarResponsavel(Long restauranteId, Long usuarioId) {
+	    Restaurante restaurante = buscarPorId(restauranteId);
+	    Usuario usuario = usuarioService.buscarPorId(usuarioId);
+	    
+	    restaurante.removerResponsavel(usuario);
+	}
+
+	@Transactional
+	public void associarResponsavel(Long restauranteId, Long usuarioId) {
+	    Restaurante restaurante = buscarPorId(restauranteId);
+	    Usuario usuario = usuarioService.buscarPorId(usuarioId);
+	    
+	    restaurante.adicionarResponsavel(usuario);
 	}
 	
 	

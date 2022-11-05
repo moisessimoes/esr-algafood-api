@@ -3,7 +3,9 @@ package com.algaworks.algafood.domain.model;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -20,9 +22,7 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.algaworks.algafood.core.validation.ValorZeroIncluiDescricao;
-
-@ValorZeroIncluiDescricao(valorField = "taxaFrete", descricaoField = "nome", descricaoObrigatoria = "Frete Grátis")
+//@ValorZeroIncluiDescricao(valorField = "taxaFrete", descricaoField = "nome", descricaoObrigatoria = "Frete Grátis")
 @Entity
 public class Restaurante {
 	
@@ -56,6 +56,8 @@ public class Restaurante {
 	
 	private Boolean ativo = Boolean.TRUE;
 	
+	private Boolean aberto = Boolean.FALSE;
+	
 	@CreationTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
 	private OffsetDateTime dataCadastro;
@@ -67,10 +69,15 @@ public class Restaurante {
 	@ManyToMany
 	@JoinTable(name = "restaurante_forma_pagamento", joinColumns = @JoinColumn(name = "restaurante_id"),
 													 inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
-	private List<FormaPagamento> formasPagamento = new ArrayList<>();
+	private Set<FormaPagamento> formasPagamento = new HashSet<>();
 	
 	@OneToMany(mappedBy = "restaurante")
 	private List<Produto> produtos = new ArrayList<>();
+	
+	@ManyToMany
+	@JoinTable(name = "restaurante_usuario_responsavel", joinColumns = @JoinColumn(name = "restaurante_id"),
+	        											 inverseJoinColumns = @JoinColumn(name = "usuario_id"))
+	private Set<Usuario> responsaveis = new HashSet<>();  
 	
 	public Long getId() {
 		return id;
@@ -104,11 +111,11 @@ public class Restaurante {
 		this.cozinha = cozinha;
 	}
 	
-	public List<FormaPagamento> getFormasPagamento() {
+	public Set<FormaPagamento> getFormasPagamento() {
 		return formasPagamento;
 	}
 
-	public void setFormasPagamento(List<FormaPagamento> formasPagamento) {
+	public void setFormasPagamento(Set<FormaPagamento> formasPagamento) {
 		this.formasPagamento = formasPagamento;
 	}
 
@@ -152,13 +159,50 @@ public class Restaurante {
 		this.ativo = ativo;
 	}
 	
+	public Boolean getAberto() {
+		return aberto;
+	}
+
+	public void setAberto(Boolean aberto) {
+		this.aberto = aberto;
+	}
 	
+	public Set<Usuario> getResponsaveis() {
+		return responsaveis;
+	}
+
+	public void setResponsaveis(Set<Usuario> responsaveis) {
+		this.responsaveis = responsaveis;
+	}
+
 	//=======================================
 	public void ativar() {
 		setAtivo(true);
 	}
 	public void inativar() {
 		setAtivo(false);
+	}
+	//=======================================
+	public void abrir() {
+		setAberto(true);
+	}
+	public void fechar() {
+		setAberto(false);
+	}
+	//=======================================
+	public boolean adicionarFormaPagamento(FormaPagamento formaPagamento ) {
+		return getFormasPagamento().add(formaPagamento);
+	}
+	public boolean removerFormaPagamento(FormaPagamento formaPagamento ) {
+		return getFormasPagamento().remove(formaPagamento);
+	}
+	//=======================================
+	public boolean removerResponsavel(Usuario usuario) {
+	    return getResponsaveis().remove(usuario);
+	}
+
+	public boolean adicionarResponsavel(Usuario usuario) {
+	    return getResponsaveis().add(usuario);
 	}
 	//=======================================
 
