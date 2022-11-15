@@ -4,19 +4,26 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.algaworks.algafood.domain.exception.NegocioException;
 
 @Entity
 public class Pedido {
@@ -25,8 +32,10 @@ public class Pedido {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	private String codigo;
+	
 	@Column(nullable = false)
-	private BigDecimal subTotal;
+	private BigDecimal subtotal;
 	
 	@Column(nullable = false)
 	private BigDecimal taxaFrete;
@@ -37,7 +46,8 @@ public class Pedido {
 	@Embedded
     private Endereco enderecoEntrega;
     
-    private StatusPedido status;
+	@Enumerated(EnumType.STRING)
+    private StatusPedido status = StatusPedido.CRIADO;
 	
 	@CreationTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
@@ -63,7 +73,7 @@ public class Pedido {
 	@JoinColumn(nullable = false)
 	private Restaurante restaurante;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	private FormaPagamento formaPagamento;
 	
@@ -107,12 +117,12 @@ public class Pedido {
 		this.dataEntrega = dataEntrega;
 	}
 
-	public BigDecimal getSubTotal() {
-		return subTotal;
+	public BigDecimal getSubtotal() {
+		return subtotal;
 	}
 
-	public void setSubTotal(BigDecimal subTotal) {
-		this.subTotal = subTotal;
+	public void setSubtotal(BigDecimal subTotal) {
+		this.subtotal = subTotal;
 	}
 
 	public BigDecimal getTaxaFrete() {
@@ -175,9 +185,64 @@ public class Pedido {
 		return status;
 	}
 
-	public void setStatus(StatusPedido status) {
-		this.status = status;
+//	public void setStatus(StatusPedido status) {
+//		this.status = status;
+//	}
+	
+	public String getCodigo() {
+		return codigo;
 	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	//===================================================
+	public void calcularValorTotal() {
+		getItens().forEach(ItemPedido::calcularPrecoTotal);
+	    this.subtotal = getItens().stream().map(item -> item.getPrecoTotal()).reduce(BigDecimal.ZERO, BigDecimal::add);
+	    this.valorTotal = this.subtotal.add(this.taxaFrete);
+	}
+	//===================================================
+	public void definirFrete() {
+	    setTaxaFrete(getRestaurante().getTaxaFrete());
+	}
+
+	public void atribuirPedidoAosItens() {
+	    getItens().forEach(item -> item.setPedido(this));
+	}
+	//===================================================
+	public void confirmar() {
+		setStatus(StatusPedido.CONFIRMADO);
+		setDataConfirmacao(OffsetDateTime.now());
+	}
+	public void entregar() {
+		setStatus(StatusPedido.ENTREGUE);
+		setDataEntrega(OffsetDateTime.now());
+	}
+	public void cancelar() {
+		setStatus(StatusPedido.CANCELADO);
+		setDataCancelamento(OffsetDateTime.now());
+	}
+	private void setStatus(StatusPedido novoStatus) {
+		if (getStatus().naoPodeAlterarPara(novoStatus)) {
+			throw new NegocioException(String.format("Status do pedido %s não pode ser alterado de %s para %s", getCodigo(), 
+																												getStatus().getDescricao(), 
+																												novoStatus.getDescricao()));
+		}
+		this.status = novoStatus;
+	}
+	//===================================================
+	//GERAR CODIGO UUID AUTOMATICO
+	//Esse metodo vai ser de callback do JPA, ou seja, antes de persistir uma entidade
+	//pedido no banco, ele vai chamar esse metodo com a anotação abaixo.
+	
+	@PrePersist
+	private void gerarCodigoUUID() {
+		setCodigo(UUID.randomUUID().toString());
+	}
+	//===================================================
+
 
 	@Override
 	public int hashCode() {

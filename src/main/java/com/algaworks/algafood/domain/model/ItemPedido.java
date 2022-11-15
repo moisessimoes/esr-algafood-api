@@ -91,7 +91,23 @@ public class ItemPedido {
 	public void setProduto(Produto produto) {
 		this.produto = produto;
 	}
-
+	
+	//===================================================
+	public void calcularPrecoTotal() {
+		BigDecimal precoUnitario = this.getPrecoUnitario();
+		Integer quantidade = this.getQuantidade();
+		
+		if (precoUnitario == null) {
+			precoUnitario = BigDecimal.ZERO;
+		}
+		
+		//Não estou considerando a possibilidade da quantidade ser zero
+		//Ate pq não tem logica um pedido ter uma quantidade zerada
+		
+		this.precoTotal = precoUnitario.multiply(new BigDecimal(quantidade));
+	}
+	//===================================================
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
