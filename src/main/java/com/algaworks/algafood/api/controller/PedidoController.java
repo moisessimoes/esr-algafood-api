@@ -26,6 +26,8 @@ import com.algaworks.algafood.domain.model.Pedido;
 import com.algaworks.algafood.domain.model.Usuario;
 import com.algaworks.algafood.domain.service.PedidoService;
 import com.algaworks.algafood.repositories.PedidoRepository;
+import com.algaworks.algafood.repositories.filter.PedidoFilter;
+import com.algaworks.algafood.specification.PedidoSpecs;
 
 @RestController
 @RequestMapping(value = "/pedidos")
@@ -65,12 +67,33 @@ public class PedidoController {
 		}
     }
     
-    
     @GetMapping
-    public List<PedidoResumoModel> listar() {
-        List<Pedido> todosPedidos = pedidoRepository.findAll();
-        return pedidoResumoModelAssembler.toCollectionModel(todosPedidos);
+    public List<PedidoResumoModel> pesquisar(PedidoFilter filtro) {
+    	List<Pedido> todosPedidos = pedidoRepository.findAll(PedidoSpecs.usandoFiltro(filtro));
+    	return pedidoResumoModelAssembler.toCollectionModel(todosPedidos);
     }
+    
+    
+    //Limitando os campos retornados pela API com @JsonFilter do Jackson
+//    @GetMapping
+//    public MappingJacksonValue listar(@RequestParam(required = false) String campos) {
+//        List<Pedido> pedidos = pedidoRepository.findAll();
+//        List<PedidoResumoModel> pedidosModel = pedidoResumoModelAssembler.toCollectionModel(pedidos);
+//        
+//        MappingJacksonValue pedidosWrapper = new MappingJacksonValue(pedidosModel);
+//        
+//        SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+//        filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.serializeAll());
+//        
+//        if (StringUtils.isNotBlank(campos)) {
+//        	filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.filterOutAllExcept(campos.split(",")));
+//        }
+//        
+//        pedidosWrapper.setFilters(filterProvider);
+//        
+//        return pedidosWrapper;
+//    }
+
     
     @GetMapping("/{codigoPedido}")
     public PedidoModel buscar(@PathVariable String codigoPedido) {
