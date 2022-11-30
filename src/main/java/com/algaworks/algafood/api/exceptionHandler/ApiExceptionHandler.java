@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -174,15 +175,27 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	//======================================================================================================================================
 	
+	//TRATAR ERROS DE PARAMETROS INVALIDOS NA URL
+	@Override
+	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+		
+		return handleValidationInternal(ex, headers, status, request, ex.getBindingResult());
+	}
+	
+	
+	//======================================================================================================================================
+	
 	
 	// ================================== TRATAR OS DADOS DOS CAMPOS NO CORPO DA REQUISICAO (JSON) ===========================================================
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		
+		return handleValidationInternal(ex, headers, status, request, ex.getBindingResult());
+	}
+
+
+	private ResponseEntity<Object> handleValidationInternal(Exception ex, HttpHeaders headers, HttpStatus status, WebRequest request, BindingResult bindingResult) {
 		ProblemType problemType = ProblemType.DADOS_INVALIDOS;
 	    String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
-	    
-	    BindingResult bindingResult = ex.getBindingResult();
 	    
 	    List<Field> problemFields = bindingResult.getAllErrors()
 	    							.stream()

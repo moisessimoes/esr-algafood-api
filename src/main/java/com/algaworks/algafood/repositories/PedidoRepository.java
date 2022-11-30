@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.algaworks.algafood.domain.model.Pedido;
-import com.algaworks.algafood.repositories.custom.CustomJpaRepository;
+import com.algaworks.algafood.repositories.infrastructure.CustomJpaRepository;
 
 @Repository
 public interface PedidoRepository extends CustomJpaRepository<Pedido, Long>, JpaSpecificationExecutor<Pedido> {

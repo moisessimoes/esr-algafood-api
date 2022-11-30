@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.algaworks.algafood.domain.model.Restaurante;
-import com.algaworks.algafood.repositories.custom.CustomJpaRepository;
+import com.algaworks.algafood.repositories.infrastructure.CustomJpaRepository;
 
 @Repository
 public interface RestauranteRepository extends CustomJpaRepository<Restaurante, Long>, RestauranteRepositoryQueries, JpaSpecificationExecutor<Restaurante> {

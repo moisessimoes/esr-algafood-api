@@ -22,7 +22,7 @@ public class ModelMapperConfig {
 		var enderecoToEnderecoModelTypeMap = modelMapper.createTypeMap(Endereco.class, EnderecoModel.class);
 		
 		enderecoToEnderecoModelTypeMap.<String>addMapping(enderecoSrc -> enderecoSrc.getCidade().getEstado().getNome(),
-														(enderecoModelDestino, valor) -> enderecoModelDestino.getCidade().setEstado(valor));
+														 (enderecoModelDestino, valor) -> enderecoModelDestino.getCidade().setEstado(valor));
 		
 		return modelMapper;
 	}

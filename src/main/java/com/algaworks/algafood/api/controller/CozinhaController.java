@@ -7,6 +7,10 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -63,9 +67,23 @@ public class CozinhaController {
 		return cozinhaService.salvar(cozinhaAtual);
 	}
 	
+//	@GetMapping
+//	public List<CozinhaModel> listar() {
+//		return cozinhaModelAssembler.toCollectionModel(cozinhaRepository.findAll());
+//	}
+	
 	@GetMapping
-	public List<CozinhaModel> listar() {
-		return cozinhaModelAssembler.toCollectionModel(cozinhaRepository.findAll());
+	public Page<CozinhaModel> listarComPaginacao(@PageableDefault(size = 10) Pageable pageable) {
+		
+		//@PageableDefault(size = 10) - Para definir uma qtd fixa de elementos
+		
+		Page<Cozinha> cozinhasPage = cozinhaRepository.findAll(pageable);
+		
+		List<CozinhaModel> cozinhasModel = cozinhaModelAssembler.toCollectionModel(cozinhasPage.getContent());
+		
+		Page<CozinhaModel> cozinhasModelPage = new PageImpl<>(cozinhasModel, pageable, cozinhasPage.getTotalElements());
+		
+		return cozinhasModelPage;
 	}
 	
 	//Esse metodo lista os dados no formato XML

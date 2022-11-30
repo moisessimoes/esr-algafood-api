@@ -6,8 +6,8 @@ import javax.persistence.criteria.Predicate;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import com.algaworks.algafood.domain.filter.PedidoFilter;
 import com.algaworks.algafood.domain.model.Pedido;
-import com.algaworks.algafood.repositories.filter.PedidoFilter;
 
 public class PedidoSpecs {
 	
@@ -17,10 +17,12 @@ public class PedidoSpecs {
 		
 		return (root, query, criteriaBuilder) -> {
 			
-			//Os fetchs abaixo é para resolver o problema do N+1 consultas do JPA
-			
-			root.fetch("restaurante").fetch("cozinha");
-			root.fetch("cliente");
+			if (Pedido.class.equals(query.getResultType())) {
+				//Os fetchs abaixo é para resolver o problema do N+1 consultas do JPA
+				
+				root.fetch("restaurante").fetch("cozinha");
+				root.fetch("cliente");
+			}
 			
 			var predicates = new ArrayList<Predicate>();
 			

@@ -5,6 +5,10 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,14 +24,16 @@ import com.algaworks.algafood.api.assembler.PedidoResumoModelAssembler;
 import com.algaworks.algafood.api.model.PedidoModel;
 import com.algaworks.algafood.api.model.PedidoResumoModel;
 import com.algaworks.algafood.api.model.input.PedidoInput;
+import com.algaworks.algafood.core.data.PageableTranslator;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
+import com.algaworks.algafood.domain.filter.PedidoFilter;
 import com.algaworks.algafood.domain.model.Pedido;
 import com.algaworks.algafood.domain.model.Usuario;
 import com.algaworks.algafood.domain.service.PedidoService;
 import com.algaworks.algafood.repositories.PedidoRepository;
-import com.algaworks.algafood.repositories.filter.PedidoFilter;
 import com.algaworks.algafood.specification.PedidoSpecs;
+import com.google.common.collect.ImmutableMap;
 
 @RestController
 @RequestMapping(value = "/pedidos")
@@ -68,9 +74,17 @@ public class PedidoController {
     }
     
     @GetMapping
-    public List<PedidoResumoModel> pesquisar(PedidoFilter filtro) {
-    	List<Pedido> todosPedidos = pedidoRepository.findAll(PedidoSpecs.usandoFiltro(filtro));
-    	return pedidoResumoModelAssembler.toCollectionModel(todosPedidos);
+    public Page<PedidoResumoModel> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
+    	
+    	pageable = traduzirPageable(pageable);
+    	
+    	Page<Pedido> pedidos = pedidoRepository.findAll(PedidoSpecs.usandoFiltro(filtro), pageable);
+    	
+    	List<PedidoResumoModel> pedidosModel = pedidoResumoModelAssembler.toCollectionModel(pedidos.getContent());
+    	
+    	Page<PedidoResumoModel> pedidosModelPage = new PageImpl<>(pedidosModel, pageable, pedidos.getTotalElements());
+    	
+    	return pedidosModelPage;
     }
     
     
@@ -99,5 +113,20 @@ public class PedidoController {
     public PedidoModel buscar(@PathVariable String codigoPedido) {
         Pedido pedido = pedidoService.buscarPorId(codigoPedido);
         return pedidoModelAssembler.toModel(pedido);
-    }   
+    }
+    
+    
+    private Pageable traduzirPageable(Pageable pageable) {
+    	
+    	//Poderia usar tambem o Map.of, da propria API do Java, que aceita ate 10 chaves-valores
+    	
+    	var mapeamento = ImmutableMap.of(
+    			"codigo", "codigo",
+    			"restaurante.nome", "restaurante.nome",
+    			"nomeCliente", "cliente.nome",
+    			"valorTotal", "valorTotal"
+    	);
+    	
+    	return PageableTranslator.translate(pageable, mapeamento);
+    }
 }
