@@ -28,7 +28,7 @@ import com.algaworks.algafood.repositories.ProdutoRepository;
 
 @RestController
 @RequestMapping("/restaurantes/{restauranteId}/produtos")
-public class ProdutoController {
+public class RestauranteProdutoController {
 	
 	@Autowired
 	private ProdutoService produtoService;
