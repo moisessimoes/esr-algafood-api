@@ -26,7 +26,7 @@ import com.algaworks.algafood.specification.RestauranteSpecs;
 public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
 	
 	@PersistenceContext
-	private EntityManager entityManager;
+	private EntityManager manager;
 	
 	@Autowired
 	@Lazy
@@ -42,7 +42,7 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
 		
 		//Tornando a consulta com Criteria mais dinamica
 		
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
 		
 		CriteriaQuery<Restaurante> criteria = builder.createQuery(Restaurante.class);
 		Root<Restaurante> root = criteria.from(Restaurante.class); //from Restaurante
@@ -68,7 +68,7 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
 		
 		criteria.where(predicates.toArray(new Predicate[0]));
 		
-		TypedQuery<Restaurante> query = entityManager.createQuery(criteria);
+		TypedQuery<Restaurante> query = manager.createQuery(criteria);
 		
 		return query.getResultList();
 		

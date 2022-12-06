@@ -14,18 +14,18 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Target({ FIELD, METHOD, PARAMETER, CONSTRUCTOR, ANNOTATION_TYPE, TYPE_USE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = { FileSizeValidator.class })
-public @interface FileSize {
+@Target({ FIELD, METHOD, PARAMETER, CONSTRUCTOR, ANNOTATION_TYPE, TYPE_USE })
+@Constraint(validatedBy = { FileContentTypeValidator.class })
+public @interface FileContentType {
 	
-	//14.3. Validando o tamanho máximo do arquivo
+	//14.4. Desafio: Validando o content type do arquivo
 	
-	String message() default "Tamanho máximo do arquivo foi excedido";
+	String message() default "Formato de arquivo inválido";
 
 	Class<?>[] groups() default { };
 
 	Class<? extends Payload>[] payload() default { };
 
-	String max();
+	String[] allowed();
 }
