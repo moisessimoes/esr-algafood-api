@@ -7,6 +7,8 @@ public interface FotoStorageService {
 	
 	//14.8. Implementando o serviço de armazenagem de fotos no disco local
 	
+	InputStream recuperar(String nomeArquivo);
+	
 	void armazenar(NovaFoto novaFoto);
 	
 	void remover(String nomeArquivo);
