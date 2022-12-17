@@ -19,6 +19,13 @@ public class StorageProperties {
 	//Essa variavel vai guardar o caminho do AWS para salvar as fotos
 	private S3 s3 = new S3();
 	
+	private TipoStorage tipo = TipoStorage.LOCAL;
+	
+	public enum TipoStorage {
+		
+		LOCAL, S3;
+	}
+	
 	public class Local {
 		
 		private Path diretorioFotos;
@@ -36,7 +43,7 @@ public class StorageProperties {
 	public class S3 {
 		
 		private String idChaveAcesso;
-		private String chaveAcessoSecreta;
+		private String idChaveSecreta;
 		private String bucket;
 		private Regions regiao;
 		private String diretorioFotos;
@@ -47,11 +54,11 @@ public class StorageProperties {
 		public void setIdChaveAcesso(String idChaveAcesso) {
 			this.idChaveAcesso = idChaveAcesso;
 		}
-		public String getChaveAcessoSecreta() {
-			return chaveAcessoSecreta;
+		public String getIdChaveSecreta() {
+			return idChaveSecreta;
 		}
-		public void setChaveAcessoSecreta(String chaveAcessoSecreta) {
-			this.chaveAcessoSecreta = chaveAcessoSecreta;
+		public void setIdChaveSecreta(String idChaveSecreta) {
+			this.idChaveSecreta = idChaveSecreta;
 		}
 		public String getBucket() {
 			return bucket;
@@ -87,5 +94,13 @@ public class StorageProperties {
 
 	public void setS3(S3 s3) {
 		this.s3 = s3;
+	}
+
+	public TipoStorage getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(TipoStorage tipo) {
+		this.tipo = tipo;
 	}
 }

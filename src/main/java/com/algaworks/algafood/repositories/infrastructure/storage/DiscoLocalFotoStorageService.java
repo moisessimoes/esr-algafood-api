@@ -1,17 +1,14 @@
 package com.algaworks.algafood.repositories.infrastructure.storage;
 
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
 import com.algaworks.algafood.core.storage.StorageProperties;
 import com.algaworks.algafood.domain.service.FotoStorageService;
 
-@Service
 public class DiscoLocalFotoStorageService implements FotoStorageService {
 	
 	//14.8. Implementando o serviço de armazenagem de fotos no disco local
@@ -42,12 +39,16 @@ public class DiscoLocalFotoStorageService implements FotoStorageService {
 	
 	
 	@Override
-	public InputStream recuperar(String nomeArquivo) {
+	public FotoRecuperada recuperar(String nomeArquivo) {
 		
 		try {
 			
 			Path filePath = getFilePath(nomeArquivo);
-			return Files.newInputStream(filePath);
+			
+			FotoRecuperada fotoRecuperada = new FotoRecuperada();
+			fotoRecuperada.setInputStream(Files.newInputStream(filePath));
+			
+			return fotoRecuperada;
 			
 		} catch (Exception e) {
 			throw new StorageException("Não foi possível recuperar o arquivo.", e);

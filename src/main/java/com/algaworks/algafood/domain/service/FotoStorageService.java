@@ -7,7 +7,7 @@ public interface FotoStorageService {
 	
 	//14.8. Implementando o serviço de armazenagem de fotos no disco local
 	
-	InputStream recuperar(String nomeArquivo);
+	FotoRecuperada recuperar(String nomeArquivo);
 	
 	void armazenar(NovaFoto novaFoto);
 	
@@ -61,6 +61,34 @@ public interface FotoStorageService {
 
 		public void setContentType(String contentType) {
 			this.contentType = contentType;
+		}
+	}
+	
+	
+	class FotoRecuperada {
+		
+		private InputStream inputStream;
+		private String url;
+		
+		public boolean hasUrl() {
+			return url != null;
+		}
+		
+		public boolean hasInputStream() {
+			return inputStream != null;
+		}
+		
+		public InputStream getInputStream() {
+			return inputStream;
+		}
+		public void setInputStream(InputStream inputStream) {
+			this.inputStream = inputStream;
+		}
+		public String getUrl() {
+			return url;
+		}
+		public void setUrl(String url) {
+			this.url = url;
 		}
 	}
 }
