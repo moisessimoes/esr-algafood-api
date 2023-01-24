@@ -24,7 +24,6 @@ import com.algaworks.algafood.api.assembler.PedidoResumoModelAssembler;
 import com.algaworks.algafood.api.model.PedidoModel;
 import com.algaworks.algafood.api.model.PedidoResumoModel;
 import com.algaworks.algafood.api.model.input.PedidoInput;
-import com.algaworks.algafood.core.data.PageableTranslator;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.filter.PedidoFilter;
@@ -33,7 +32,7 @@ import com.algaworks.algafood.domain.model.Usuario;
 import com.algaworks.algafood.domain.service.PedidoService;
 import com.algaworks.algafood.repositories.PedidoRepository;
 import com.algaworks.algafood.specification.PedidoSpecs;
-import com.google.common.collect.ImmutableMap;
+//import com.google.common.collect.ImmutableMap;
 
 @RestController
 @RequestMapping(value = "/pedidos")
@@ -76,7 +75,7 @@ public class PedidoController {
     @GetMapping
     public Page<PedidoResumoModel> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
     	
-    	pageable = traduzirPageable(pageable);
+    	//pageable = traduzirPageable(pageable);
     	
     	Page<Pedido> pedidos = pedidoRepository.findAll(PedidoSpecs.usandoFiltro(filtro), pageable);
     	
@@ -116,17 +115,17 @@ public class PedidoController {
     }
     
     
-    private Pageable traduzirPageable(Pageable pageable) {
-    	
-    	//Poderia usar tambem o Map.of, da propria API do Java, que aceita ate 10 chaves-valores
-    	
-    	var mapeamento = ImmutableMap.of(
-    			"codigo", "codigo",
-    			"restaurante.nome", "restaurante.nome",
-    			"nomeCliente", "cliente.nome",
-    			"valorTotal", "valorTotal"
-    	);
-    	
-    	return PageableTranslator.translate(pageable, mapeamento);
-    }
+//    private Pageable traduzirPageable(Pageable pageable) {
+//    	
+//    	//Poderia usar tambem o Map.of, da propria API do Java, que aceita ate 10 chaves-valores
+//    	
+//    	var mapeamento = ImmutableMap.of(
+//    			"codigo", "codigo",
+//    			"restaurante.nome", "restaurante.nome",
+//    			"nomeCliente", "cliente.nome",
+//    			"valorTotal", "valorTotal"
+//    	);
+//    	
+//    	return PageableTranslator.translate(pageable, mapeamento);
+//    }
 }

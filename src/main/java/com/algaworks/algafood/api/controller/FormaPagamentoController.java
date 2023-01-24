@@ -1,11 +1,15 @@
 package com.algaworks.algafood.api.controller;
 
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
 import com.algaworks.algafood.api.assembler.FormaPagamentoInputDisassembler;
 import com.algaworks.algafood.api.assembler.FormaPagamentoModelAssembler;
@@ -67,14 +73,98 @@ public class FormaPagamentoController {
 	
 	
 	@GetMapping("/{formaPagamentoId}")
-	public FormaPagamentoModel buscar(@PathVariable Long formaPagamentoId) {
-		return formaPagamentoModelAssembler.toModel(formaPagamentoService.buscarPorId(formaPagamentoId));
+	public ResponseEntity<FormaPagamentoModel> buscar(@PathVariable Long formaPagamentoId, ServletWebRequest request) {
+		
+		//==================================================================================
+		//17.10. Desafio: implementando requisições condicionais com Deep ETags
+		
+		ShallowEtagHeaderFilter.disableContentCaching(request.getRequest()); //Desabilita o Shallow eTag
+		
+		String eTag = "0";
+		
+		OffsetDateTime dataUltimaAtualizacao = formaPagamentoRepository.getLastUpdateById(formaPagamentoId);
+		
+		if (dataUltimaAtualizacao != null) {
+			eTag = String.valueOf(dataUltimaAtualizacao.toEpochSecond());
+		}
+		
+		if (request.checkNotModified(eTag)) {
+			return null;
+		}
+		
+		//==================================================================================
+		
+		
+		//17.3. Desafio: adicionando o cabeçalho Cache-Control na resposta
+		
+		FormaPagamento formaPagamento = formaPagamentoService.buscarPorId(formaPagamentoId);
+		
+		FormaPagamentoModel formaPagamentoModel = formaPagamentoModelAssembler.toModel(formaPagamento);
+		
+		return ResponseEntity.ok()
+							 .cacheControl(CacheControl.maxAge(15, TimeUnit.SECONDS))
+							 .body(formaPagamentoModel);
 	}
 	
 	
 	@GetMapping
-	public List<FormaPagamentoModel> listar() {
-		return formaPagamentoModelAssembler.toCollectionModel(formaPagamentoRepository.findAll());
+	public ResponseEntity<List<FormaPagamentoModel>> listar(ServletWebRequest request) {
+		
+		//==================================================================================
+		//17.9. Implementando requisições condicionais com Deep ETags
+		
+		ShallowEtagHeaderFilter.disableContentCaching(request.getRequest()); //Desabilita o Shallow eTag
+		
+		String eTag = "0";
+		
+		OffsetDateTime dataUltimaAtualizacao = formaPagamentoRepository.getLastUpdate();
+		
+		if (dataUltimaAtualizacao != null) {
+			eTag = String.valueOf(dataUltimaAtualizacao.toEpochSecond());
+		}
+		
+		//Se o que for passado no if-None-Match for igual ao eTag gerado, quer dizer que não houve alteração nos registros
+		if (request.checkNotModified(eTag)) {
+			return null;
+		}
+		
+		//==================================================================================
+		
+		//17.2. Habilitando o cache com o cabeçalho Cache-Control e a diretiva max-age
+		
+		List<FormaPagamento> todasAsFormasPagamento = formaPagamentoRepository.findAll();
+		
+		List<FormaPagamentoModel> todasAsFormasPagamentoModel = formaPagamentoModelAssembler.toCollectionModel(todasAsFormasPagamento); 
+		
+		/*O metodo cacheControl é o responsável por manter a representação do JSON 'fresca' por um periodo de tempo determinado
+		 * 
+		 * Apos isso, a requisição é feita normalmente
+		 * 
+		 * No exemplo abaixo, temos o seguinte:
+		 * 
+		 * Quando uma primeira requisição for feita nesse GET, vai ser feita a consulta no banco para buscar os dados
+		 * 
+		 * Se no intervalo de tempo determinado for feita uma nova requisição, a consulta no banco não vai ser feita,
+		 * pois os dados estão armazenados em cache. Isso gera mais agilidade na hora da API trazer os dados.
+		 * 
+		 * - .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS)) Controla quanto tempo os dados ficaram disponiveis no cache
+		 * 
+		 * OBS: Isso é válido apenas para testar o navegador, pois o mesmo possui cache local
+		 * 
+		 * No postman não funciona o cache.
+		 * 
+		 * */
+		
+		//17.6. Adicionando outras diretivas de Cache-Control na resposta HTTP
+		
+		return ResponseEntity.ok()
+//							 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+//							 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePrivate()) //resposta so pode ficar em cache local
+							 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic()) //resposta pode ficar em cache local e compartilhado
+//							 .cacheControl(CacheControl.noCache()) //se a resposta for cacheada, sempre vai ser necessário validar no servidor
+//							 .cacheControl(CacheControl.noStore()) //nenhum cache pode armazenar a resposta
+							 .eTag(eTag)
+							 .body(todasAsFormasPagamentoModel);
 	}
 	
 	
