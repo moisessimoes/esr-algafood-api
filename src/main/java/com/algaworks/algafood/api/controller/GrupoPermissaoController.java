@@ -17,8 +17,11 @@ import com.algaworks.algafood.api.model.PermissaoModel;
 import com.algaworks.algafood.domain.model.Grupo;
 import com.algaworks.algafood.domain.service.GrupoService;
 
+import io.swagger.annotations.Api;
+
+@Api(tags = "Permissões")
 @RestController
-@RequestMapping("/grupos/{grupoId}/permissoes")
+@RequestMapping(path = "/grupos/{grupoId}/permissoes")
 public class GrupoPermissaoController {
 	
 	@Autowired

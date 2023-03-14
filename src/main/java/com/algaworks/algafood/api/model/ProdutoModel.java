@@ -2,12 +2,23 @@ package com.algaworks.algafood.api.model;
 
 import java.math.BigDecimal;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class ProdutoModel {
 	
+	@ApiModelProperty(position = 0, example = "1")
 	private Long id;
+	
+	@ApiModelProperty(position = 1, example = "Cerveja Budweiser")
 	private String nome;
+	
+	@ApiModelProperty(position = 2, example = "Cerveja Budweiser")
 	private String descricao;
+	
+	@ApiModelProperty(position = 3, example = "7.00")
 	private BigDecimal preco;
+	
+	@ApiModelProperty(position = 4, example = "true")
 	private Boolean ativo;
 
 	public Long getId() {

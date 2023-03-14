@@ -3,11 +3,15 @@ package com.algaworks.algafood.api.model;
 import com.algaworks.algafood.api.view.RestauranteView;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class CozinhaModel {
 	
+	@ApiModelProperty(position = 0, example = "1")
 	@JsonView(RestauranteView.Resumo.class)
 	private Long id;
 	
+	@ApiModelProperty(position = 1, example = "Sulista")
 	@JsonView(RestauranteView.Resumo.class)
 	private String nome;
 	

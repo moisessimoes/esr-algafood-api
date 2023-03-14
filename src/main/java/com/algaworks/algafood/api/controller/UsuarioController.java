@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.api.assembler.UsuarioInputDisassembler;
 import com.algaworks.algafood.api.assembler.UsuarioModelAssembler;
+import com.algaworks.algafood.api.controller.openapi.controller.UsuariosControllerOpenApi;
 import com.algaworks.algafood.api.model.UsuarioModel;
 import com.algaworks.algafood.api.model.input.SenhaInput;
 import com.algaworks.algafood.api.model.input.UsuarioComSenhaInput;
@@ -27,7 +28,7 @@ import com.algaworks.algafood.repositories.UsuarioRepository;
 
 @RestController
 @RequestMapping("/usuarios")
-public class UsuarioController {
+public class UsuarioController implements UsuariosControllerOpenApi {
 	
 	@Autowired
 	private UsuarioService usuarioService;

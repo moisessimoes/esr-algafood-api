@@ -5,14 +5,21 @@ import java.time.OffsetDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class PedidoFilter {
 	
+	@ApiModelProperty(position = 0, example = "1")
 	private Long clienteId;
+	
+	@ApiModelProperty(position = 1, example = "1")
 	private Long restauranteId;
 	
+	@ApiModelProperty(position = 2, example = "2023-01-02T20:34:04Z")
 	@DateTimeFormat(iso = ISO.DATE_TIME)
 	private OffsetDateTime dataCriacaoInicio;
 	
+	@ApiModelProperty(position = 3, example = "2023-01-02T20:34:04Z")
 	@DateTimeFormat(iso = ISO.DATE_TIME)
 	private OffsetDateTime dataCriacaoFim;
 	
