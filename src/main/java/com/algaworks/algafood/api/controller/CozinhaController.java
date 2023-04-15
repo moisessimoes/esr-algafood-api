@@ -1,16 +1,15 @@
 package com.algaworks.algafood.api.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -51,6 +50,9 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 	@Autowired
 	private CozinhaInputDisassembler cozinhaInputDisassembler;
 	
+	@Autowired
+	private PagedResourcesAssembler<Cozinha> pagedResourcesAssembler; //19.15. Adicionando hypermedia em recursos com paginação
+	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cozinha adicionar(@RequestBody @Valid CozinhaInput cozinha) {
@@ -75,17 +77,20 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 //	}
 	
 	@GetMapping
-	public Page<CozinhaModel> listarComPaginacao(@PageableDefault(size = 10) Pageable pageable) {
+	public PagedModel<CozinhaModel> listarComPaginacao(@PageableDefault(size = 10) Pageable pageable) {
 		
 		//@PageableDefault(size = 10) - Para definir uma qtd fixa de elementos
 		
 		Page<Cozinha> cozinhasPage = cozinhaRepository.findAll(pageable);
 		
-		List<CozinhaModel> cozinhasModel = cozinhaModelAssembler.toCollectionModel(cozinhasPage.getContent());
+//		List<CozinhaModel> cozinhasModel = cozinhaModelAssembler.toCollectionModel(cozinhasPage.getContent());
+//		Page<CozinhaModel> cozinhasModelPage = new PageImpl<>(cozinhasModel, pageable, cozinhasPage.getTotalElements());
 		
-		Page<CozinhaModel> cozinhasModelPage = new PageImpl<>(cozinhasModel, pageable, cozinhasPage.getTotalElements());
+		//19.15. Adicionando hypermedia em recursos com paginação
 		
-		return cozinhasModelPage;
+		PagedModel<CozinhaModel> pagedCozinhasModel = pagedResourcesAssembler.toModel(cozinhasPage, cozinhaModelAssembler);
+		
+		return pagedCozinhasModel;
 	}
 	
 	//Esse metodo lista os dados no formato XML

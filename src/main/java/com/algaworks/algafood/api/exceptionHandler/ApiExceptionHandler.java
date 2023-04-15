@@ -103,9 +103,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		                }
 		                
 		                return FieldBuilder.builder()
-								.addName(name)
-								.addUserMessage(message)
-								.build();
+										   .addName(name)
+										   .addUserMessage(message)
+										   .build();
 		            })
 		            .collect(Collectors.toList());
 		    

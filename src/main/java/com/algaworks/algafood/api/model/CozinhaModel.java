@@ -1,11 +1,13 @@
 package com.algaworks.algafood.api.model;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.algaworks.algafood.api.view.RestauranteView;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class CozinhaModel {
+public class CozinhaModel extends RepresentationModel<CozinhaModel> {
 	
 	@ApiModelProperty(position = 0, example = "1")
 	@JsonView(RestauranteView.Resumo.class)

@@ -25,4 +25,8 @@ public enum StatusPedido {
 	public boolean naoPodeAlterarPara(StatusPedido novoStatus) {
 		return !novoStatus.statusAnteriores.contains(this);
 	}
+	
+	public boolean podeAlterarPara(StatusPedido novoStatus) { //19.23. Adicionando links condicionalmente
+		return !naoPodeAlterarPara(novoStatus);
+	}
 }

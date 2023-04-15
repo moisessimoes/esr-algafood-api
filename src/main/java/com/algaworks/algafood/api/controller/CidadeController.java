@@ -1,13 +1,11 @@
 package com.algaworks.algafood.api.controller;
 
-import java.net.URI;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,15 +17,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.algaworks.algafood.api.assembler.CidadeInputDisassembler;
 import com.algaworks.algafood.api.assembler.CidadeModelAssembler;
 import com.algaworks.algafood.api.controller.openapi.controller.CidadeControllerOpenApi;
 import com.algaworks.algafood.api.model.CidadeModel;
 import com.algaworks.algafood.api.model.input.CidadeInput;
+import com.algaworks.algafood.api.utils.ResourceUriHelper;
 import com.algaworks.algafood.domain.exception.CidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Cidade;
@@ -51,14 +47,44 @@ public class CidadeController implements CidadeControllerOpenApi {
 	private CidadeInputDisassembler cidadeInputDisassembler;
 	
 	@GetMapping
-	public List<CidadeModel> listar() {
-		return cidadeModelAssembler.toCollectionModel(cidadeRepository.findAll());
+	public CollectionModel<CidadeModel> listar() {
+		
+		List<Cidade> cidades = cidadeRepository.findAll();
+		
+		return cidadeModelAssembler.toCollectionModel(cidades);
+		
+		//19.10. Adicionando hypermedia na representação de recursos de coleção
+		
+		//CollectionModel<CidadeModel> cidadesCollectionModel = CollectionModel.of(cidadesModel);
+		
+		//cidadesCollectionModel.add(linkTo(CidadeController.class).withSelfRel());
 	}
 	
 	
 	@GetMapping("/{cidadeId}")
 	public CidadeModel buscar(@PathVariable("cidadeId") Long cidadeId) {
-		return cidadeModelAssembler.toModel(cidadeService.buscarPorId(cidadeId));
+		
+		Cidade cidade = cidadeService.buscarPorId(cidadeId);
+		
+		 CidadeModel cidadeModel = cidadeModelAssembler.toModel(cidade);
+		 
+		 //19.7. Adicionando hypermedia na representação de recurso único com HAL
+		 //cidadeModel.add(Link.of("http://localhost:9090/cidades/1"));
+		 
+		 
+		 //19.8. Construindo links dinâmicos com WebMvcLinkBuilder
+		 //cidadeModel.add(WebMvcLinkBuilder.linkTo(CidadeController.class).slash(cidadeModel.getId()).withSelfRel());
+		 
+		 //19.9. Construindo links que apontam para métodos
+		 //cidadeModel.add(linkTo(methodOn(CidadeController.class).buscar(cidadeModel.getId())).withSelfRel());
+		 
+		 //cidadeModel.add(linkTo(CidadeController.class).withRel("cidades"));
+		 //cidadeModel.add(linkTo(methodOn(CidadeController.class).listar()).withRel("cidades"));
+		 
+		 //cidadeModel.getEstado().add(linkTo(EstadoController.class).slash(cidadeModel.getEstado().getId()).withSelfRel());
+		 //cidadeModel.getEstado().add(linkTo(methodOn(EstadoController.class).buscar(cidadeModel.getEstado().getId())).withSelfRel());
+		 
+		 return cidadeModel;
 		//return cidadeRepository.findById(cidadeId).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 	
@@ -74,13 +100,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 			
 			CidadeModel cidadeModel = cidadeModelAssembler.toModel(city);
 			
-			//19.2. Adicionando a URI do recurso criado no header da resposta (HATEOAS)
-			
-			URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(cidadeModel.getId()).toUri();
-			
-			//Capturando o response da requisição e adicionando o URI completa no cabeçalho
-			HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-			response.setHeader(HttpHeaders.LOCATION, uri.toString());
+			ResourceUriHelper.addUriInResponseHeader(cidadeModel.getId());
 			
 			return cidadeModel;
 			

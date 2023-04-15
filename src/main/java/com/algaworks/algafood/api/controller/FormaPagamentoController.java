@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -110,7 +111,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 	
 	
 	@GetMapping
-	public ResponseEntity<List<FormaPagamentoModel>> listar(ServletWebRequest request) {
+	public ResponseEntity<CollectionModel<FormaPagamentoModel>> listar(ServletWebRequest request) {
 		
 		//==================================================================================
 		//17.9. Implementando requisições condicionais com Deep ETags
@@ -136,7 +137,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 		
 		List<FormaPagamento> todasAsFormasPagamento = formaPagamentoRepository.findAll();
 		
-		List<FormaPagamentoModel> todasAsFormasPagamentoModel = formaPagamentoModelAssembler.toCollectionModel(todasAsFormasPagamento); 
+		CollectionModel<FormaPagamentoModel> todasAsFormasPagamentoModel = formaPagamentoModelAssembler.toCollectionModel(todasAsFormasPagamento); 
 		
 		/*O metodo cacheControl é o responsável por manter a representação do JSON 'fresca' por um periodo de tempo determinado
 		 * 

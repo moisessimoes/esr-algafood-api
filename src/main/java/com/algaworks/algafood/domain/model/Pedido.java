@@ -241,6 +241,18 @@ public class Pedido extends AbstractAggregateRoot<Pedido> {
 		}
 		this.status = novoStatus;
 	}
+	
+	//19.23. Adicionando links condicionalmente
+	public boolean podeSerConfirmado() {
+		return getStatus().podeAlterarPara(StatusPedido.CONFIRMADO);
+	}
+	public boolean podeSerEntregue() {
+		return getStatus().podeAlterarPara(StatusPedido.ENTREGUE);
+	}
+	public boolean podeSerCancelado() {
+		return getStatus().podeAlterarPara(StatusPedido.CANCELADO);
+	}
+	
 	//===================================================
 	//GERAR CODIGO UUID AUTOMATICO
 	//Esse metodo vai ser de callback do JPA, ou seja, antes de persistir uma entidade

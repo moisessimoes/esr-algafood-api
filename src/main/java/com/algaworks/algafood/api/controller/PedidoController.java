@@ -1,14 +1,13 @@
 package com.algaworks.algafood.api.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +25,8 @@ import com.algaworks.algafood.api.controller.openapi.controller.PedidoController
 import com.algaworks.algafood.api.model.PedidoModel;
 import com.algaworks.algafood.api.model.PedidoResumoModel;
 import com.algaworks.algafood.api.model.input.PedidoInput;
+import com.algaworks.algafood.core.data.PageWrapper;
+import com.algaworks.algafood.core.data.PageableTranslator;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.filter.PedidoFilter;
@@ -34,6 +35,7 @@ import com.algaworks.algafood.domain.model.Usuario;
 import com.algaworks.algafood.domain.service.PedidoService;
 import com.algaworks.algafood.repositories.PedidoRepository;
 import com.algaworks.algafood.specification.PedidoSpecs;
+import com.google.common.collect.ImmutableMap;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -56,6 +58,9 @@ public class PedidoController implements PedidoControllerOpenApi {
     
     @Autowired
     private PedidoResumoModelAssembler pedidoResumoModelAssembler;
+    
+    @Autowired
+	private PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
     
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -81,17 +86,20 @@ public class PedidoController implements PedidoControllerOpenApi {
     	@ApiImplicitParam(name = "campos", value = "Nomes das propriedades para filtrar na resposta, separados por vírgula.", paramType = "query", type = "string")
     })
     @GetMapping
-    public Page<PedidoResumoModel> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
+    public PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
     	
-    	//pageable = traduzirPageable(pageable);
+    	Pageable pageableTraduzido = traduzirPageable(pageable);
     	
-    	Page<Pedido> pedidos = pedidoRepository.findAll(PedidoSpecs.usandoFiltro(filtro), pageable);
+    	Page<Pedido> pedidosPage = pedidoRepository.findAll(PedidoSpecs.usandoFiltro(filtro), pageableTraduzido);
     	
-    	List<PedidoResumoModel> pedidosModel = pedidoResumoModelAssembler.toCollectionModel(pedidos.getContent());
+//    	List<PedidoResumoModel> pedidosModel = pedidoResumoModelAssembler.toCollectionModel(pedidos.getContent());
+//    	Page<PedidoResumoModel> pedidosModelPage = new PageImpl<>(pedidosModel, pageable, pedidos.getTotalElements());
     	
-    	Page<PedidoResumoModel> pedidosModelPage = new PageImpl<>(pedidosModel, pageable, pedidos.getTotalElements());
+    	pedidosPage = new PageWrapper<>(pedidosPage, pageable); //19.17. Corrigindo links de paginação com ordenação
     	
-    	return pedidosModelPage;
+    	PagedModel<PedidoResumoModel> pagedPedidosModel = pagedResourcesAssembler.toModel(pedidosPage, pedidoResumoModelAssembler);
+    	
+    	return pagedPedidosModel;
     }
     
     
@@ -126,17 +134,22 @@ public class PedidoController implements PedidoControllerOpenApi {
     }
     
     
-//    private Pageable traduzirPageable(Pageable pageable) {
-//    	
-//    	//Poderia usar tambem o Map.of, da propria API do Java, que aceita ate 10 chaves-valores
-//    	
-//    	var mapeamento = ImmutableMap.of(
-//    			"codigo", "codigo",
-//    			"restaurante.nome", "restaurante.nome",
-//    			"nomeCliente", "cliente.nome",
-//    			"valorTotal", "valorTotal"
-//    	);
-//    	
-//    	return PageableTranslator.translate(pageable, mapeamento);
-//    }
+    private Pageable traduzirPageable(Pageable pageable) {
+    	
+    	//Poderia usar tambem o Map.of, da propria API do Java, que aceita ate 10 chaves-valores
+    	
+    	var mapeamento = ImmutableMap.of(
+    			"codigo", "codigo",
+    			"subtotal", "subtotal",
+    			"taxaFrete", "taxaFrete",
+    			"valorTotal", "valorTotal",
+    			"dataCriacao", "dataCriacao",
+    			"nomerestaurante", "restaurante.nome",
+    			"restaurante.id", "restaurante.id",
+    			"cliente.id", "cliente.id",
+    			"nomeCliente", "cliente.nome"
+    	);
+    	
+    	return PageableTranslator.translate(pageable, mapeamento);
+    }
 }

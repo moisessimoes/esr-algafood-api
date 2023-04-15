@@ -3,8 +3,12 @@ package com.algaworks.algafood.api.model;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
 //@JsonFilter("pedidoFilter") //Limitando os campos retornados pela API com @JsonFilter do Jackson
-public class PedidoResumoModel {
+@Relation(collectionRelation = "pedidos")
+public class PedidoResumoModel extends RepresentationModel<PedidoResumoModel> {
 	
 	//private Long id;
 	private String codigo;
@@ -13,7 +17,7 @@ public class PedidoResumoModel {
     private BigDecimal valorTotal;
     private String status;
     private OffsetDateTime dataCriacao;
-    private RestauranteResumoModel restaurante;
+    private RestauranteApenasNomeModel restaurante;
     private UsuarioModel cliente;
     
 //	public Long getId() {
@@ -58,10 +62,10 @@ public class PedidoResumoModel {
 	public void setDataCriacao(OffsetDateTime dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
-	public RestauranteResumoModel getRestaurante() {
+	public RestauranteApenasNomeModel getRestaurante() {
 		return restaurante;
 	}
-	public void setRestaurante(RestauranteResumoModel restaurante) {
+	public void setRestaurante(RestauranteApenasNomeModel restaurante) {
 		this.restaurante = restaurante;
 	}
 	public UsuarioModel getCliente() {

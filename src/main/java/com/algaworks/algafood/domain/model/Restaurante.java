@@ -176,27 +176,34 @@ public class Restaurante {
 	}
 
 	//=======================================
+	
 	public void ativar() {
 		setAtivo(true);
 	}
 	public void inativar() {
 		setAtivo(false);
 	}
+	
 	//=======================================
+	
 	public void abrir() {
 		setAberto(true);
 	}
 	public void fechar() {
 		setAberto(false);
 	}
+	
 	//=======================================
+	
 	public boolean adicionarFormaPagamento(FormaPagamento formaPagamento ) {
 		return getFormasPagamento().add(formaPagamento);
 	}
 	public boolean removerFormaPagamento(FormaPagamento formaPagamento ) {
 		return getFormasPagamento().remove(formaPagamento);
 	}
+	
 	//=======================================
+	
 	public boolean removerResponsavel(Usuario usuario) {
 	    return getResponsaveis().remove(usuario);
 	}
@@ -204,7 +211,9 @@ public class Restaurante {
 	public boolean adicionarResponsavel(Usuario usuario) {
 	    return getResponsaveis().add(usuario);
 	}
+	
 	//=======================================
+	
 	public boolean aceitaFormaPagamento(FormaPagamento formaPagamento) {
 	    return getFormasPagamento().contains(formaPagamento);
 	}
@@ -212,6 +221,40 @@ public class Restaurante {
 	public boolean naoAceitaFormaPagamento(FormaPagamento formaPagamento) {
 	    return !aceitaFormaPagamento(formaPagamento);
 	}
+	//=======================================
+	
+	public boolean isAberto() {
+	    return this.aberto;
+	}
+
+	public boolean isFechado() {
+	    return !isAberto();
+	}
+
+	public boolean isInativo() {
+	    return !isAtivo();
+	}
+
+	public boolean isAtivo() {
+	    return this.ativo;
+	}
+
+	public boolean aberturaPermitida() {
+	    return isAtivo() && isFechado();
+	}
+
+	public boolean ativacaoPermitida() {
+	    return isInativo();
+	}
+
+	public boolean inativacaoPermitida() {
+	    return isAtivo();
+	}
+
+	public boolean fechamentoPermitido() {
+	    return isAberto();
+	} 
+	
 	//=======================================
 
 	@Override

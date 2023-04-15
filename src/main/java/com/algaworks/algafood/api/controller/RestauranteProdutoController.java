@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import com.algaworks.algafood.api.assembler.ProdutoModelAssembler;
 import com.algaworks.algafood.api.controller.openapi.controller.RestauranteProdutoControllerOpenApi;
 import com.algaworks.algafood.api.model.ProdutoModel;
 import com.algaworks.algafood.api.model.input.ProdutoInput;
+import com.algaworks.algafood.api.utils.AlgaLinks;
 import com.algaworks.algafood.domain.model.Produto;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.service.ProdutoService;
@@ -29,8 +31,11 @@ import com.algaworks.algafood.domain.service.RestauranteService;
 import com.algaworks.algafood.repositories.ProdutoRepository;
 
 @RestController
-@RequestMapping(path = "/restaurantes/{restauranteId}/produtos", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/restaurantes/{restauranteId}/produtos", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestauranteProdutoController implements RestauranteProdutoControllerOpenApi {
+	
+	@Autowired
+	private AlgaLinks algaLinks;
 	
 	@Autowired
 	private ProdutoService produtoService;
@@ -73,8 +78,8 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 	
 	
 	@GetMapping
-	public List<ProdutoModel> listar(@PathVariable Long restauranteId, @RequestParam(required = false) boolean incluirInativos) {
-		
+	public CollectionModel<ProdutoModel> listar(@PathVariable Long restauranteId, @RequestParam(required = false, defaultValue = "false") Boolean incluirInativos) {
+																 
 		Restaurante restaurante = restauranteService.buscarPorId(restauranteId);
 		
 		List<Produto> produtos = null;
@@ -86,7 +91,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 			produtos = produtoRepository.findAtivosByRestaurante(restaurante);
 		}
 		
-		return produtoModelAssembler.toCollectionModel(produtos);
+		return produtoModelAssembler.toCollectionModel(produtos).add(algaLinks.linkToProdutos(restauranteId));
 	}
 	
 	

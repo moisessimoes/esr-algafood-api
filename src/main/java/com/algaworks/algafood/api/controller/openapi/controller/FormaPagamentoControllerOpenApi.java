@@ -1,7 +1,6 @@
 package com.algaworks.algafood.api.controller.openapi.controller;
 
-import java.util.List;
-
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -44,7 +43,7 @@ public interface FormaPagamentoControllerOpenApi {
 																																		ServletWebRequest request);
 	
 	@ApiOperation("Lista as forma de pagamento")
-	public ResponseEntity<List<FormaPagamentoModel>> listar(ServletWebRequest request);
+	public ResponseEntity<CollectionModel<FormaPagamentoModel>> listar(ServletWebRequest request);
 	
 	@ApiOperation("Exclui uma forma de pagamento")
 	public void excluir(@ApiParam(value = "ID de uma forma de pagamento", example = "1", required = true) Long formaPagamentoId);

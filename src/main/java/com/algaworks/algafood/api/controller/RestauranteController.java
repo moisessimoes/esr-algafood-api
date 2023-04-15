@@ -9,8 +9,10 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
@@ -27,12 +29,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algaworks.algafood.api.assembler.RestauranteApenasNomeModelAssembler;
+import com.algaworks.algafood.api.assembler.RestauranteBasicoModelAssembler;
 import com.algaworks.algafood.api.assembler.RestauranteInputDisassembler;
 import com.algaworks.algafood.api.assembler.RestauranteModelAssembler;
 import com.algaworks.algafood.api.controller.openapi.controller.RestauranteControllerOpenApi;
+import com.algaworks.algafood.api.model.RestauranteApenasNomeModel;
+import com.algaworks.algafood.api.model.RestauranteBasicoModel;
 import com.algaworks.algafood.api.model.RestauranteModel;
 import com.algaworks.algafood.api.model.input.RestauranteInput;
-import com.algaworks.algafood.api.view.RestauranteView;
 import com.algaworks.algafood.core.validation.ValidacaoException;
 import com.algaworks.algafood.domain.exception.CidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.CozinhaNaoEncontradaException;
@@ -41,7 +46,6 @@ import com.algaworks.algafood.domain.exception.RestauranteNaoEncontradoException
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.service.RestauranteService;
 import com.algaworks.algafood.repositories.RestauranteRepository;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -63,6 +67,12 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 	
 	@Autowired
 	private RestauranteInputDisassembler restauranteInputDisassembler;
+	
+	@Autowired
+	private RestauranteBasicoModelAssembler restauranteBasicoModelAssembler;
+	
+	@Autowired
+	private RestauranteApenasNomeModelAssembler restauranteApenasNomeModelAssembler;
 	
 	@PostMapping
 	public RestauranteModel adicionar(@RequestBody @Valid RestauranteInput restaurante) {
@@ -104,11 +114,8 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 	public Restaurante atualizarParcial(@PathVariable("restauranteId") Long restauranteId, @RequestBody Map<String, Object> campos, HttpServletRequest req) {
 		
 		Restaurante restauranteAtual = restauranteService.buscarPorId(restauranteId);
-		
 		merge(campos, restauranteAtual, req);
-		
 		validate(restauranteAtual, "restaurante");
-		
 		return restauranteService.salvar(restauranteAtual);
 	}
 
@@ -180,10 +187,10 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 //	}
 	
 	
-	@JsonView(RestauranteView.Resumo.class)
+	//@JsonView(RestauranteView.Resumo.class)
 	@GetMapping
-	public List<RestauranteModel> listar() {
-		return restauranteModelAssembler.toCollectionModel(restauranteRepository.findAll());
+	public CollectionModel<RestauranteBasicoModel> listar() {
+		return restauranteBasicoModelAssembler.toCollectionModel(restauranteRepository.findAll());
 	}
 //	@JsonView(RestauranteView.Resumo.class)
 //	@GetMapping(params = "projecao=resumo")
@@ -192,10 +199,10 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 //	}
 	
 	
-	@JsonView(RestauranteView.ApenasNome.class)
+	//@JsonView(RestauranteView.ApenasNome.class)
 	@GetMapping(params = "projecao=apenas-nome")
-	public List<RestauranteModel> listarApenasNome() {
-		return listar();
+	public CollectionModel<RestauranteApenasNomeModel> listarApenasNome() {
+		return restauranteApenasNomeModelAssembler.toCollectionModel(restauranteRepository.findAll());
 	}
 	
 	
@@ -222,8 +229,9 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 	
 	@PutMapping("/{restauranteId}/ativo")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void ativar(@PathVariable("restauranteId") Long restauranteId) {
+	public ResponseEntity<Void> ativar(@PathVariable("restauranteId") Long restauranteId) {
 		restauranteService.ativar(restauranteId);
+		return ResponseEntity.noContent().build();
 	}
 	
 	
@@ -249,20 +257,23 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 	
 	@DeleteMapping("/{restauranteId}/ativo")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void inativar(@PathVariable("restauranteId") Long restauranteId) {
+	public ResponseEntity<Void> inativar(@PathVariable("restauranteId") Long restauranteId) {
 		restauranteService.inativar(restauranteId);
+		return ResponseEntity.noContent().build();
 	}
 	
 	
 	@PutMapping("/{restauranteId}/abertura")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void abrir(@PathVariable("restauranteId") Long restauranteId) {
+	public ResponseEntity<Void> abrir(@PathVariable("restauranteId") Long restauranteId) {
 		restauranteService.abrir(restauranteId);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@PutMapping("/{restauranteId}/fechamento")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void fechar(@PathVariable("restauranteId") Long restauranteId) {
+	public ResponseEntity<Void> fechar(@PathVariable("restauranteId") Long restauranteId) {
 		restauranteService.fechar(restauranteId);
+		return ResponseEntity.noContent().build();
 	}
 }

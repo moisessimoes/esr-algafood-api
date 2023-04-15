@@ -84,8 +84,8 @@ public class RestauranteProdutoFotoController implements RestauranteProdutoFotoC
 	
 	@GetMapping(produces = MediaType.ALL_VALUE)
 	public ResponseEntity<?> servirFoto(@PathVariable Long restauranteId, 
-														  @PathVariable Long produtoId,
-														  @RequestHeader(name = "accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
+										@PathVariable Long produtoId,
+										@RequestHeader(name = "accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
 		
 		try {
 			

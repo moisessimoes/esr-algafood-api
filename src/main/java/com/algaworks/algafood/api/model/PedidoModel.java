@@ -4,7 +4,11 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public class PedidoModel {
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
+@Relation(collectionRelation = "pedidos")
+public class PedidoModel extends RepresentationModel<PedidoModel> {
 	
 	//private Long id;
 	private String codigo;
@@ -16,7 +20,7 @@ public class PedidoModel {
     private OffsetDateTime dataConfirmacao;
     private OffsetDateTime dataEntrega;
     private OffsetDateTime dataCancelamento;
-    private RestauranteResumoModel restaurante;
+    private RestauranteApenasNomeModel restaurante;
     private UsuarioModel cliente;
     private FormaPagamentoModel formaPagamento;
     private EnderecoModel enderecoEntrega;
@@ -82,10 +86,10 @@ public class PedidoModel {
 	public void setDataCancelamento(OffsetDateTime dataCancelamento) {
 		this.dataCancelamento = dataCancelamento;
 	}
-	public RestauranteResumoModel getRestaurante() {
+	public RestauranteApenasNomeModel  getRestaurante() {
 		return restaurante;
 	}
-	public void setRestaurante(RestauranteResumoModel restaurante) {
+	public void setRestaurante(RestauranteApenasNomeModel  restaurante) {
 		this.restaurante = restaurante;
 	}
 	public UsuarioModel getCliente() {
