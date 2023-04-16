@@ -10,6 +10,8 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("RestauranteBasicoModelOpenApi")
 public class RestauranteBasicoModelOpenApi {
 	
+	/*Devido as correções na documentação por causa do HATEOAS, essa classe foi substituida pela classe RestaurantesModelOpenApi*/
+	
 	@ApiModelProperty(example = "1")
 	private Long id;
 	

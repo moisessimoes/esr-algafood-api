@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 
-import com.algaworks.algafood.api.controller.openapi.model.RestauranteBasicoModelOpenApi;
+import com.algaworks.algafood.api.controller.openapi.model.RestaurantesModelOpenApi;
 import com.algaworks.algafood.api.exceptionHandler.Problem;
 import com.algaworks.algafood.api.model.RestauranteApenasNomeModel;
 import com.algaworks.algafood.api.model.RestauranteBasicoModel;
@@ -23,6 +23,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Api(tags = "Restaurantes")
 public interface RestauranteControllerOpenApi {
@@ -49,7 +50,7 @@ public interface RestauranteControllerOpenApi {
 	public Restaurante atualizarParcial(@ApiParam(value = "ID de um restaurante", example = "1", required = true) Long restauranteId, 
 			Map<String, Object> campos, HttpServletRequest req);
 	
-	@ApiOperation(value = "Lista restaurantes", response = RestauranteBasicoModelOpenApi.class)
+	@ApiOperation(value = "Lista restaurantes", response = RestaurantesModelOpenApi.class)
 	@ApiImplicitParams({ //18.28. Descrevendo parâmetros de projeções em endpoints de consultas
     	@ApiImplicitParam(name = "projecao", value = "Nome da projeção de pedidos.", paramType = "query", type = "string", allowableValues = "apenas-nome")
     })
@@ -57,7 +58,7 @@ public interface RestauranteControllerOpenApi {
 	public CollectionModel<RestauranteBasicoModel> listar();
 	
 	
-	
+	@ApiIgnore
 	@ApiOperation(value = "Lista restaurantes", hidden = true)
 	public CollectionModel<RestauranteApenasNomeModel> listarApenasNome();
 	

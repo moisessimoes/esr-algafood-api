@@ -4,6 +4,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import com.algaworks.algafood.api.controller.openapi.model.FormasPagamentoModelOpenApi;
 import com.algaworks.algafood.api.exceptionHandler.Problem;
 import com.algaworks.algafood.api.model.FormaPagamentoModel;
 import com.algaworks.algafood.api.model.input.FormaPagamentoInput;
@@ -42,7 +43,7 @@ public interface FormaPagamentoControllerOpenApi {
 	public ResponseEntity<FormaPagamentoModel> buscar(@ApiParam(value = "ID de uma forma de pagamento", example = "1", required = true) Long formaPagamentoId, 
 																																		ServletWebRequest request);
 	
-	@ApiOperation("Lista as forma de pagamento")
+	@ApiOperation(value = "Lista as forma de pagamento", response = FormasPagamentoModelOpenApi.class)
 	public ResponseEntity<CollectionModel<FormaPagamentoModel>> listar(ServletWebRequest request);
 	
 	@ApiOperation("Exclui uma forma de pagamento")
