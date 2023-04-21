@@ -22,29 +22,33 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.algaworks.algafood.api.controller.openapi.model.CidadesModelOpenApi;
-import com.algaworks.algafood.api.controller.openapi.model.CozinhasModelOpenApi;
-import com.algaworks.algafood.api.controller.openapi.model.EstadosModelOpenApi;
-import com.algaworks.algafood.api.controller.openapi.model.FormasPagamentoModelOpenApi;
-import com.algaworks.algafood.api.controller.openapi.model.GrupoPermissoesModelOpenApi;
-import com.algaworks.algafood.api.controller.openapi.model.GruposModelOpenApi;
-import com.algaworks.algafood.api.controller.openapi.model.LinksModelOpenApi;
-import com.algaworks.algafood.api.controller.openapi.model.PageableModelOpenApi;
-import com.algaworks.algafood.api.controller.openapi.model.PedidosModelOpenApi;
-import com.algaworks.algafood.api.controller.openapi.model.ProdutosModelOpenApi;
-import com.algaworks.algafood.api.controller.openapi.model.RestaurantesModelOpenApi;
-import com.algaworks.algafood.api.controller.openapi.model.UsuariosModelOpenApi;
 import com.algaworks.algafood.api.exceptionHandler.Problem;
-import com.algaworks.algafood.api.model.CidadeModel;
-import com.algaworks.algafood.api.model.CozinhaModel;
-import com.algaworks.algafood.api.model.EstadoModel;
-import com.algaworks.algafood.api.model.FormaPagamentoModel;
-import com.algaworks.algafood.api.model.GrupoModel;
-import com.algaworks.algafood.api.model.PedidoResumoModel;
-import com.algaworks.algafood.api.model.PermissaoModel;
-import com.algaworks.algafood.api.model.ProdutoModel;
-import com.algaworks.algafood.api.model.RestauranteBasicoModel;
-import com.algaworks.algafood.api.model.UsuarioModel;
+import com.algaworks.algafood.api.v1.controller.openapi.model.CidadesModelOpenApi;
+import com.algaworks.algafood.api.v1.controller.openapi.model.CozinhasModelOpenApi;
+import com.algaworks.algafood.api.v1.controller.openapi.model.EstadosModelOpenApi;
+import com.algaworks.algafood.api.v1.controller.openapi.model.FormasPagamentoModelOpenApi;
+import com.algaworks.algafood.api.v1.controller.openapi.model.GrupoPermissoesModelOpenApi;
+import com.algaworks.algafood.api.v1.controller.openapi.model.GruposModelOpenApi;
+import com.algaworks.algafood.api.v1.controller.openapi.model.LinksModelOpenApi;
+import com.algaworks.algafood.api.v1.controller.openapi.model.PageableModelOpenApi;
+import com.algaworks.algafood.api.v1.controller.openapi.model.PedidosModelOpenApi;
+import com.algaworks.algafood.api.v1.controller.openapi.model.ProdutosModelOpenApi;
+import com.algaworks.algafood.api.v1.controller.openapi.model.RestaurantesModelOpenApi;
+import com.algaworks.algafood.api.v1.controller.openapi.model.UsuariosModelOpenApi;
+import com.algaworks.algafood.api.v1.model.CidadeModel;
+import com.algaworks.algafood.api.v1.model.CozinhaModel;
+import com.algaworks.algafood.api.v1.model.EstadoModel;
+import com.algaworks.algafood.api.v1.model.FormaPagamentoModel;
+import com.algaworks.algafood.api.v1.model.GrupoModel;
+import com.algaworks.algafood.api.v1.model.PedidoResumoModel;
+import com.algaworks.algafood.api.v1.model.PermissaoModel;
+import com.algaworks.algafood.api.v1.model.ProdutoModel;
+import com.algaworks.algafood.api.v1.model.RestauranteBasicoModel;
+import com.algaworks.algafood.api.v1.model.UsuarioModel;
+import com.algaworks.algafood.api.v2.controller.openapi.model.CidadesModelOpenApiV2;
+import com.algaworks.algafood.api.v2.controller.openapi.model.CozinhasModelOpenApiV2;
+import com.algaworks.algafood.api.v2.model.CidadeModelV2;
+import com.algaworks.algafood.api.v2.model.CozinhaModelV2;
 import com.fasterxml.classmate.TypeResolver;
 
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
@@ -67,15 +71,20 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Import(BeanValidatorPluginsConfiguration.class) //18.11. Descrevendo restrições de validação de propriedades do modelo
 public class SpringFoxConfig implements WebMvcConfigurer {
 	
+	
+	//Para remvoer a documentação de APIs desligadas, basta apagar o metodo Docket ou comentar a anoração @Bean
+	
 	@Bean
-	public Docket apiDocket() {
+	public Docket apiDocketV1() {
 		
 		var typeResolver = new TypeResolver();
 		
 		return new Docket(DocumentationType.SWAGGER_2)
+			  .groupName("V1")
 			  .select()
 		      .apis(RequestHandlerSelectors.basePackage("com.algaworks.algafood.api"))
-		      .paths(PathSelectors.any())
+		      //.paths(PathSelectors.any())
+		      .paths(PathSelectors.ant("/v1/**")) //20.16. Gerando documentação das versões da API com SpringFox e Swagger UI
 		      .build()
 		      .useDefaultResponseMessages(false)
 		      .globalResponseMessage(RequestMethod.GET, globalGetResponseMessages()) //18.12. Descrevendo códigos de status de respostas de forma global
@@ -134,7 +143,7 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 //		    		  						.build()
 //		    		  ))
 		      
-		      .apiInfo(apiInfo())
+		      .apiInfo(apiInfoV1())
 		      .tags(new Tag("Cidades", "Gerencia as cidades"))
 		      .tags(new Tag("Cozinhas", "Gerencia as cozinhas"))
 		      .tags(new Tag("Estados", "Gerencia os estados"))
@@ -153,6 +162,50 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 		   	  .tags(new Tag("Usuários", "Gerencia os usuários"))
 		   	  .tags(new Tag("Grupo de Usuários", "Gerencia os grupos de usuários"))
 		   	  .tags(new Tag("Ponto de Entrada Raíz", "Ponto de Entrada Raíz das APIs"));
+	}
+	
+	
+	@Bean
+	public Docket apiDocketV2() {
+		
+		////20.16. Gerando documentação das versões da API com SpringFox e Swagger UI
+		
+		var typeResolver = new TypeResolver();
+		
+		return new Docket(DocumentationType.SWAGGER_2)
+				.groupName("V2")
+				.select()
+				.apis(RequestHandlerSelectors.basePackage("com.algaworks.algafood.api"))
+				//.paths(PathSelectors.any())
+				.paths(PathSelectors.ant("/v2/**")) //20.16. Gerando documentação das versões da API com SpringFox e Swagger UI
+				.build()
+				.useDefaultResponseMessages(false)
+				.globalResponseMessage(RequestMethod.GET, globalGetResponseMessages()) //18.12. Descrevendo códigos de status de respostas de forma global
+				.globalResponseMessage(RequestMethod.POST, globalPostResponseMessages()) //18.13. Desafio: descrevendo códigos de status de respostas de forma global
+				.globalResponseMessage(RequestMethod.PUT, globalPutResponseMessages()) //18.13. Desafio: descrevendo códigos de status de respostas de forma global
+				.globalResponseMessage(RequestMethod.DELETE, globalDeleteResponseMessages()) //18.13. Desafio: descrevendo códigos de status de respostas de forma global
+				
+				.additionalModels(typeResolver.resolve(Problem.class))
+				
+				.directModelSubstitute(Pageable.class, PageableModelOpenApi.class) //18.20. Corrigindo documentação com substituição de Pageable
+				
+				.directModelSubstitute(Links.class, LinksModelOpenApi.class) //19.39. Corrigindo as propriedades de links na documentação
+				
+				//18.21. Corrigindo documentação com substituição de Page
+				//.alternateTypeRules(AlternateTypeRules.newRule(typeResolver.resolve(Page.class, CozinhaModel.class), CozinhasModelOpenApi.class))
+				
+				//19.41. Corrigindo a paginação na documentação
+				.alternateTypeRules(AlternateTypeRules.newRule(typeResolver.resolve(PagedModel.class, CozinhaModelV2.class), CozinhasModelOpenApiV2.class))
+				
+				//19.40. Corrigindo a documentação dos endpoints de cidades
+				.alternateTypeRules(AlternateTypeRules.newRule(typeResolver.resolve(CollectionModel.class, CidadeModelV2.class), CidadesModelOpenApiV2.class))
+				
+				//18.23. Ignorando tipos de parâmetros de operações na documentação
+				.ignoredParameterTypes(ServletWebRequest.class, URL.class, URI.class, URLStreamHandler.class, Resource.class, File.class, InputStream.class)
+				
+				.apiInfo(apiInfoV2())
+				.tags(new Tag("Cidades", "Gerencia as cidades"))
+				.tags(new Tag("Cozinhas", "Gerencia as cozinhas"));
 	}
 	
 	
@@ -265,12 +318,24 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 	}
 	
 	
-	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("Algafood API")
-								   .description("API aberta para clientes e restaurantes")
+	private ApiInfo apiInfoV1() {
+		return new ApiInfoBuilder().title("Algafood API - (Depreciada)")
+								   .description("API aberta para clientes e restaurantes. <br>"
+								   		+ "<strong>Essa versão da API está depreciada e será descontinuada a partir de 01/06/2023. Use a versão mais atual da API.")
 								   .version("1.0")
 								   .contact(new Contact("AlgaWorks", "https://www.algaworks.com", "contato@algaworks.com.br"))
 								   .build();
+	}
+	
+	private ApiInfo apiInfoV2() {
+		
+		////20.16. Gerando documentação das versões da API com SpringFox e Swagger UI
+		
+		return new ApiInfoBuilder().title("Algafood API")
+				.description("API aberta para clientes e restaurantes")
+				.version("2.0")
+				.contact(new Contact("AlgaWorks", "https://www.algaworks.com", "contato@algaworks.com.br"))
+				.build();
 	}
 	
 	
