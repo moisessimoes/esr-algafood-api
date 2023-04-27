@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -34,6 +36,8 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ApiExceptionHandler.class);
 	
 	private static final String MSG_ERRO_USUARIO_FINAL = "Ocorreu um erro interno inesperado no sistema. Tente novamente e se o problema persistir, entre em contato com o administrador";
 	
@@ -73,7 +77,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		// fazendo logging) para mostrar a stacktrace no console
 		// Se não fizer isso, você não vai ver a stacktrace de exceptions que seriam importantes
 		// para você durante, especialmente na fase de desenvolvimento
-		ex.printStackTrace();
+		//ex.printStackTrace();
+		logger.error(ex.getMessage(), ex);
 		
 		var problem = createProblemBuilder(HttpStatus.INTERNAL_SERVER_ERROR, ProblemType.ERRO_DE_SISTEMA, detail);
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);

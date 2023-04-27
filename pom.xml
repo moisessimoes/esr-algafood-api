@@ -22,6 +22,8 @@
     <aws-java-sdk-s3.version>1.11.671</aws-java-sdk-s3.version>
     <guava.version>31.0.1-jre</guava.version>
     <springfox.version>2.9.2</springfox.version>
+    <!-- 21.4. Configurando o appender do Loggly no Logback -->
+    <!-- <logback-ext-loggly.version>0.1.5</logback-ext-loggly.version> -->
   </properties>
 
   <dependencies>
@@ -182,6 +184,13 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-hateoas</artifactId>
 	</dependency>
+	
+	<!-- 21.4. Configurando o appender do Loggly no Logback -->
+	<!-- <dependency>
+		<groupId>org.logback-extensions</groupId>
+		<artifactId>logback-ext-loggly</artifactId>
+		<version>${logback-ext-loggly.version}</version>
+	</dependency> -->
 	
   </dependencies>
 

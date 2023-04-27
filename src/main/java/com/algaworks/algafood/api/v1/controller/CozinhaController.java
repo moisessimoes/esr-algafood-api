@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,8 @@ import com.algaworks.algafood.repositories.CozinhaRepository;
 @RestController
 @RequestMapping(path = "/v1/cozinhas", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CozinhaController implements CozinhaControllerOpenApi {
+	
+	private static final Logger logger = LoggerFactory.getLogger(CozinhaController.class);
 	
 	@Autowired
 	private CozinhaService cozinhaService;
@@ -80,6 +84,14 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 	public PagedModel<CozinhaModel> listarComPaginacao(@PageableDefault(size = 10) Pageable pageable) {
 		
 		//@PageableDefault(size = 10) - Para definir uma qtd fixa de elementos
+		
+		//21.1. Introdução ao Logback e SLF4J
+		logger.info("Consultando cozinhas com páginas de {} registros", pageable.getPageSize());
+		
+//		if (true) {
+//			//21.2. Desafio: registrando logs de exceptions não tratadas
+//			throw new RuntimeException("Teste de Exception");
+//		}
 		
 		Page<Cozinha> cozinhasPage = cozinhaRepository.findAll(pageable);
 		
