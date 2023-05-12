@@ -1,9 +1,11 @@
 package com.algaworks.algafood.api.v1.model;
 
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import io.swagger.annotations.ApiModelProperty;
 
+@Relation(collectionRelation = "cozinhas")
 public class CozinhaModel extends RepresentationModel<CozinhaModel> {
 	
 	@ApiModelProperty(position = 0, example = "1")
