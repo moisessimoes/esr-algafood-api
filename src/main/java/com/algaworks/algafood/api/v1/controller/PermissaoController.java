@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.algaworks.algafood.api.v1.assembler.PermissaoModelAssembler;
 import com.algaworks.algafood.api.v1.controller.openapi.controller.PermissaoControllerOpenApi;
 import com.algaworks.algafood.api.v1.model.PermissaoModel;
+import com.algaworks.algafood.core.security.CheckSecurity;
 import com.algaworks.algafood.domain.model.Permissao;
 import com.algaworks.algafood.repositories.PermissaoRepository;
 
@@ -28,6 +29,7 @@ public class PermissaoController implements PermissaoControllerOpenApi {
 	@Autowired
 	private PermissaoModelAssembler permissaoModelAssembler;
 
+	@CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
 	@Override
 	@GetMapping
 	public CollectionModel<PermissaoModel> listar() {

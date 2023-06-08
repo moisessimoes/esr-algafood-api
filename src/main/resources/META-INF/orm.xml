@@ -11,4 +11,18 @@
 		</query>
 	</named-query>
 	
+	<!-- 23.28. Restringindo acessos de forma contextual (sensível à informação) -->
+	<named-query name="Restaurante.existsResponsavel">
+		<query>
+			select case when count(1) > 0 then true else false end from Restaurante rest JOIN rest.responsaveis resp where rest.id = :restauranteId and resp.id = :usuarioId	
+		</query>
+	</named-query>
+	
+	<!-- 23.31. Desafio: restringindo acessos aos endpoints de transição de status de pedidos -->
+	<named-query name="Pedido.isPedidoGerenciadoPor">
+		<query>
+			select case when count(1) > 0 then true else false end from Pedido ped JOIN ped.restaurante rest JOIN rest.responsaveis resp where ped.codigo = :codigoPedido and resp.id = :usuarioId	
+		</query>
+	</named-query>
+	
 </entity-mappings>

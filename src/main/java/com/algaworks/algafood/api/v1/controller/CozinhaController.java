@@ -32,6 +32,7 @@ import com.algaworks.algafood.api.v1.assembler.CozinhaModelAssembler;
 import com.algaworks.algafood.api.v1.controller.openapi.controller.CozinhaControllerOpenApi;
 import com.algaworks.algafood.api.v1.model.CozinhaModel;
 import com.algaworks.algafood.api.v1.model.input.CozinhaInput;
+import com.algaworks.algafood.core.security.CheckSecurity;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.service.CozinhaService;
 import com.algaworks.algafood.repositories.CozinhaRepository;
@@ -57,6 +58,9 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 	@Autowired
 	private PagedResourcesAssembler<Cozinha> pagedResourcesAssembler; //19.15. Adicionando hypermedia em recursos com paginação
 	
+	
+	//@PreAuthorize("hasAuthority('EDITAR_COZINHAS')") //23.21. Method Security: Restringindo acesso com @PreAuthorize e SpEL
+	@CheckSecurity.Cozinhas.PodeEditar //23.23. Simplificando o controle de acesso em métodos com meta-anotações
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cozinha adicionar(@RequestBody @Valid CozinhaInput cozinha) {
@@ -65,6 +69,8 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 	}
 	
 	
+	//@PreAuthorize("hasAuthority('EDITAR_COZINHAS')") //23.21. Method Security: Restringindo acesso com @PreAuthorize e SpEL
+	@CheckSecurity.Cozinhas.PodeEditar //23.23. Simplificando o controle de acesso em métodos com meta-anotações
 	@PutMapping("/{cozinhaId}")
 	public Cozinha atualizar(@PathVariable("cozinhaId") Long cozinhaId, @RequestBody @Valid CozinhaInput cozinha) {
 		
@@ -80,6 +86,8 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 //		return cozinhaModelAssembler.toCollectionModel(cozinhaRepository.findAll());
 //	}
 	
+	//@PreAuthorize("isAuthenticated()") //23.21. Method Security: Restringindo acesso com @PreAuthorize e SpEL
+	@CheckSecurity.Cozinhas.PodeConsultar //23.23. Simplificando o controle de acesso em métodos com meta-anotações
 	@GetMapping
 	public PagedModel<CozinhaModel> listarComPaginacao(@PageableDefault(size = 10) Pageable pageable) {
 		
@@ -112,6 +120,8 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 //	}
 	
 	
+	//@PreAuthorize("isAuthenticated()") //23.21. Method Security: Restringindo acesso com @PreAuthorize e SpEL
+	@CheckSecurity.Cozinhas.PodeConsultar //23.23. Simplificando o controle de acesso em métodos com meta-anotações
 	@GetMapping("/{cozinhaId}")
 	public CozinhaModel buscar(@PathVariable("cozinhaId") Long id, HttpServletRequest req) {
 		
@@ -127,6 +137,8 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 	}
 	
 	
+	//@PreAuthorize("hasAuthority('EDITAR_COZINHAS')") //23.21. Method Security: Restringindo acesso com @PreAuthorize e SpEL
+	@CheckSecurity.Cozinhas.PodeEditar //23.23. Simplificando o controle de acesso em métodos com meta-anotações
 	@DeleteMapping("/{cozinhaId}")
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable("cozinhaId") Long cozinhaId) {

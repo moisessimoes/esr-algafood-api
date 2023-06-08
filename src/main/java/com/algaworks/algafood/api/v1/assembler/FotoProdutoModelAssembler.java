@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.algaworks.algafood.api.v1.AlgaLinks;
 import com.algaworks.algafood.api.v1.controller.RestauranteProdutoFotoController;
 import com.algaworks.algafood.api.v1.model.FotoProdutoModel;
+import com.algaworks.algafood.core.security.AlgaSecurity;
 import com.algaworks.algafood.domain.model.FotoProduto;
 
 @Component
@@ -18,6 +19,9 @@ public class FotoProdutoModelAssembler extends RepresentationModelAssemblerSuppo
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private AlgaSecurity algaSecurity; 
 	
 	public FotoProdutoModelAssembler() {
 		super(RestauranteProdutoFotoController.class, FotoProdutoModel.class);
@@ -30,7 +34,11 @@ public class FotoProdutoModelAssembler extends RepresentationModelAssemblerSuppo
 		
 		modelMapper.map(fotoProduto, fotoProdutoModel);
 		
-		fotoProdutoModel.add(algaLinks.linkToProdutos(fotoProduto.getRestauranteId(), fotoProduto.getProduto().getId(), "produto"));
+		if (algaSecurity.podeConsultar()) {
+			
+			fotoProdutoModel.add(algaLinks.linkToFotoProduto(fotoProduto.getRestauranteId(), fotoProduto.getProduto().getId()));
+			fotoProdutoModel.add(algaLinks.linkToProdutos(fotoProduto.getRestauranteId(), fotoProduto.getProduto().getId(), "produto"));
+		}
 		
 		return fotoProdutoModel;
 	}

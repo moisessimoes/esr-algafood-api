@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.api.v1.AlgaLinks;
+import com.algaworks.algafood.core.security.AlgaSecurity;
 
 import io.swagger.annotations.Api;
 
@@ -19,24 +20,37 @@ public class RootEntryPointController { //19.36. Implementando o Root Entry Poin
 	@Autowired
 	private AlgaLinks algaLinks;
 	
+	@Autowired
+	private AlgaSecurity algaSecurity; 
+	
 	@GetMapping
 	public RootEntryPointModel root() {
 		
 		var rootEntryModel = new RootEntryPointModel();
 		
-		rootEntryModel.add(algaLinks.linkToCozinhas("cozinhas"));
-		rootEntryModel.add(algaLinks.linkToPedidos("pedidos"));
-		rootEntryModel.add(algaLinks.linkToRestaurantes("restaurantes"));
-		rootEntryModel.add(algaLinks.linkToGrupos("grupos"));
-		rootEntryModel.add(algaLinks.linkToUsuarios("usuarios"));
-		rootEntryModel.add(algaLinks.linkToPermissoes("permissoes"));
-		rootEntryModel.add(algaLinks.linkToFormasPagamento("formas-pagamento"));
-		rootEntryModel.add(algaLinks.linkToEstados("estados"));
-		rootEntryModel.add(algaLinks.linkToCidades("cidades"));
-		rootEntryModel.add(algaLinks.linkToEstatisticas("estatisticas"));
+		if (algaSecurity.podeConsultar()) {
+			
+			rootEntryModel.add(algaLinks.linkToCozinhas("cozinhas"));
+			rootEntryModel.add(algaLinks.linkToRestaurantes("restaurantes"));
+			rootEntryModel.add(algaLinks.linkToFormasPagamento("formas-pagamento"));
+			rootEntryModel.add(algaLinks.linkToEstados("estados"));
+			rootEntryModel.add(algaLinks.linkToCidades("cidades"));
+			rootEntryModel.add(algaLinks.linkToPedidos("pedidos"));
+		}
+		
+		if (algaSecurity.podeConsultarUsuariosGruposPermissoes()) {
+			
+			rootEntryModel.add(algaLinks.linkToGrupos("grupos"));
+			rootEntryModel.add(algaLinks.linkToUsuarios("usuarios"));
+			rootEntryModel.add(algaLinks.linkToPermissoes("permissoes"));
+		}
+		
+		if (algaSecurity.podenConsultarEstatisticas()) {
+			rootEntryModel.add(algaLinks.linkToEstatisticas("estatisticas"));
+		}
 		
 		return rootEntryModel;
 	}
 	
-	private static class RootEntryPointModel extends RepresentationModel<RootEntryPointModel> {}
+	private static class RootEntryPointModel extends RepresentationModel<RootEntryPointModel> { }
 }

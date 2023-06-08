@@ -33,6 +33,8 @@ public interface RestauranteRepository extends CustomJpaRepository<Restaurante, 
 	
 	int countByCozinhaId(Long cozinha);
 	
+	boolean existsResponsavel(Long restauranteId, Long usuarioId);
+	
 	/*
 	 * O metodo abaixo está em uma classe de repositorio customizado (RestauranteRepositoryImpl) e, apenas declarando ele aqui, 
 	 * o Spring Data JPA consegue pegar e acessar a implementação do repositorio customizado.

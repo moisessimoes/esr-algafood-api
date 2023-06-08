@@ -24,6 +24,7 @@ import com.algaworks.algafood.api.v1.assembler.ProdutoModelAssembler;
 import com.algaworks.algafood.api.v1.controller.openapi.controller.RestauranteProdutoControllerOpenApi;
 import com.algaworks.algafood.api.v1.model.ProdutoModel;
 import com.algaworks.algafood.api.v1.model.input.ProdutoInput;
+import com.algaworks.algafood.core.security.CheckSecurity;
 import com.algaworks.algafood.domain.model.Produto;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.service.ProdutoService;
@@ -52,6 +53,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 	@Autowired
 	private ProdutoInputDisassembler ProdutoInputDisassembler;
 	
+	@CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ProdutoModel adicionar(@RequestBody @Valid ProdutoInput produtoInput, @PathVariable Long restauranteId) {
@@ -65,6 +67,8 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 		return produtoModelAssembler.toModel(produto);
 	}
 	
+	
+	@CheckSecurity.Restaurantes.PodeGerenciarFuncionamento
 	@PutMapping("/{produtoId}")
 	public ProdutoModel atualizar(@RequestBody @Valid ProdutoInput produtoInput, @PathVariable Long restauranteId, @PathVariable Long produtoId) {
 		
@@ -77,6 +81,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 	}
 	
 	
+	@CheckSecurity.Restaurantes.PodeConsultar
 	@GetMapping
 	public CollectionModel<ProdutoModel> listar(@PathVariable Long restauranteId, @RequestParam(required = false, defaultValue = "false") Boolean incluirInativos) {
 																 
@@ -95,6 +100,7 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
 	}
 	
 	
+	@CheckSecurity.Restaurantes.PodeConsultar
 	@GetMapping("/{produtoId}")
 	public ProdutoModel buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
 		Produto produto = produtoService.buscarPorId(restauranteId, produtoId);

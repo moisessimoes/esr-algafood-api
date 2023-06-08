@@ -27,6 +27,8 @@ import com.algaworks.algafood.api.v1.model.PedidoResumoModel;
 import com.algaworks.algafood.api.v1.model.input.PedidoInput;
 import com.algaworks.algafood.core.data.PageWrapper;
 import com.algaworks.algafood.core.data.PageableTranslator;
+import com.algaworks.algafood.core.security.AlgaSecurity;
+import com.algaworks.algafood.core.security.CheckSecurity;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.filter.PedidoFilter;
@@ -43,6 +45,9 @@ import io.swagger.annotations.ApiImplicitParams;
 @RestController
 @RequestMapping(path = "/v1/pedidos", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PedidoController implements PedidoControllerOpenApi {
+	
+	@Autowired
+	private AlgaSecurity algaSecurity; //23.17. Obtendo usuário autenticado no Resource Server
 	
 	@Autowired
 	private PedidoService pedidoService;
@@ -62,6 +67,7 @@ public class PedidoController implements PedidoControllerOpenApi {
     @Autowired
 	private PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
     
+    @CheckSecurity.Pedidos.PodeCriar
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PedidoModel adicionar(@RequestBody @Valid PedidoInput pedidoInput) {
@@ -69,9 +75,8 @@ public class PedidoController implements PedidoControllerOpenApi {
     	try {
     		Pedido novoPedido = pedidoInputDisassembler.toDomainObject(pedidoInput);
         	
-        	// TODO pegar usuário autenticado
             novoPedido.setCliente(new Usuario());
-            novoPedido.getCliente().setId(1L);
+            novoPedido.getCliente().setId(algaSecurity.getUsuarioId());
             
             novoPedido = pedidoService.salvar(novoPedido);
             
@@ -82,6 +87,7 @@ public class PedidoController implements PedidoControllerOpenApi {
     }
     
     
+    @CheckSecurity.Pedidos.PodePesquisar
     @ApiImplicitParams({ //18.26. Descrevendo parâmetros implícitos em operações
     	@ApiImplicitParam(name = "campos", value = "Nomes das propriedades para filtrar na resposta, separados por vírgula.", paramType = "query", type = "string")
     })
@@ -124,6 +130,7 @@ public class PedidoController implements PedidoControllerOpenApi {
 //    }
 
     
+    @CheckSecurity.Pedidos.PodeBuscar
     @ApiImplicitParams({ //18.26. Descrevendo parâmetros implícitos em operações
     	@ApiImplicitParam(name = "campos", value = "Nomes das propriedades para filtrar na resposta, separados por vírgula.", paramType = "query", type = "string")
     })

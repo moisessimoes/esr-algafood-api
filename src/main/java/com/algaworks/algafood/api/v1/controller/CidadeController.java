@@ -24,6 +24,7 @@ import com.algaworks.algafood.api.v1.assembler.CidadeModelAssembler;
 import com.algaworks.algafood.api.v1.controller.openapi.controller.CidadeControllerOpenApi;
 import com.algaworks.algafood.api.v1.model.CidadeModel;
 import com.algaworks.algafood.api.v1.model.input.CidadeInput;
+import com.algaworks.algafood.core.security.CheckSecurity;
 import com.algaworks.algafood.domain.exception.CidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Cidade;
@@ -58,6 +59,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 	@Autowired
 	private CidadeInputDisassembler cidadeInputDisassembler;
 	
+	@CheckSecurity.Cidades.PodeConsultar
 	@GetMapping //(produces = AlgaMediaType.V1_APPLICATION_JSON_VALUE)
 	public CollectionModel<CidadeModel> listar() {
 		
@@ -73,6 +75,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 	}
 	
 	
+	@CheckSecurity.Cidades.PodeConsultar
 	@GetMapping(path = "/{cidadeId}") //, produces = AlgaMediaType.V1_APPLICATION_JSON_VALUE)
 	public CidadeModel buscar(@PathVariable("cidadeId") Long cidadeId) {
 		
@@ -101,6 +104,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 	}
 	
 	
+	@CheckSecurity.Cidades.PodeEditar
 	@PostMapping//(produces = AlgaMediaType.V1_APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public CidadeModel adicionar(@RequestBody @Valid CidadeInput cidade) {
@@ -122,6 +126,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 	}
 	
 	
+	@CheckSecurity.Cidades.PodeEditar
 	@PutMapping(path = "/{cidadeId}") //, produces = AlgaMediaType.V1_APPLICATION_JSON_VALUE)
 	public Cidade atualizar(@PathVariable("cidadeId") Long cidadeId, @RequestBody @Valid CidadeInput cidade) {
 		
@@ -139,6 +144,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 	}
 	
 	
+	@CheckSecurity.Cidades.PodeEditar
 	@DeleteMapping("/{cidadeId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable("cidadeId") Long cidadeId) {

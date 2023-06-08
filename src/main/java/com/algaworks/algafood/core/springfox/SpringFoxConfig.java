@@ -53,16 +53,23 @@ import com.fasterxml.classmate.TypeResolver;
 
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.OAuthBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.ResponseMessageBuilder;
 import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.GrantType;
+import springfox.documentation.service.ResourceOwnerPasswordCredentialsGrant;
 import springfox.documentation.service.ResponseMessage;
+import springfox.documentation.service.SecurityReference;
+import springfox.documentation.service.SecurityScheme;
 import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -71,8 +78,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Import(BeanValidatorPluginsConfiguration.class) //18.11. Descrevendo restrições de validação de propriedades do modelo
 public class SpringFoxConfig implements WebMvcConfigurer {
 	
-	
-	//Para remvoer a documentação de APIs desligadas, basta apagar o metodo Docket ou comentar a anoração @Bean
+	//Para remover a documentação de APIs desligadas, basta apagar o metodo Docket ou comentar a anoração @Bean
 	
 	@Bean
 	public Docket apiDocketV1() {
@@ -161,8 +167,46 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 		   	  .tags(new Tag("Restaurante - Produtos - Fotos", "Gerencia as fotos dos produtos dos restaurantes"))
 		   	  .tags(new Tag("Usuários", "Gerencia os usuários"))
 		   	  .tags(new Tag("Grupo de Usuários", "Gerencia os grupos de usuários"))
-		   	  .tags(new Tag("Ponto de Entrada Raíz", "Ponto de Entrada Raíz das APIs"));
+		   	  .tags(new Tag("Ponto de Entrada Raíz", "Ponto de Entrada Raíz das APIs"))
+		   	  
+		
+		   	  //23.42. Ajustando a documentação da API para suporte a OAuth2
+			  .securitySchemes(Arrays.asList(securityScheme()))
+			  .securityContexts(Arrays.asList(securityContext()));
 	}
+	
+	//23.42. Ajustando a documentação da API para suporte a OAuth2
+	
+	private SecurityScheme securityScheme() {
+		
+		return new OAuthBuilder().name("AlgaFood")
+				                 .grantTypes(grantTypes())
+				                 .scopes(scopes())
+				                 .build();
+	}
+	
+	private SecurityContext securityContext() {
+		
+		var securityReference = SecurityReference.builder()
+												 .reference("AlgaFood")
+												 .scopes(scopes().toArray(new AuthorizationScope[0]))
+												 .build();
+		
+		return SecurityContext.builder()
+							  .securityReferences(Arrays.asList(securityReference))
+							  .forPaths(PathSelectors.any())
+							  .build();
+	}
+	
+	private List<GrantType> grantTypes() {
+		return Arrays.asList(new ResourceOwnerPasswordCredentialsGrant("/oauth/token"));
+	}
+	
+	private List<AuthorizationScope> scopes() {
+		return Arrays.asList(new AuthorizationScope("READ", "Acesso de leitura"), new AuthorizationScope("WRITE", "Acesso de escrita"));
+	}
+	
+	//==========================================================================================================
 	
 	
 	@Bean
@@ -345,5 +389,6 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
 		
 		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+		
 	}
 }

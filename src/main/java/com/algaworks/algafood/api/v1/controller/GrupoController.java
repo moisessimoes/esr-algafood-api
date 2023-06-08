@@ -21,6 +21,7 @@ import com.algaworks.algafood.api.v1.assembler.GrupoModelAssembler;
 import com.algaworks.algafood.api.v1.controller.openapi.controller.GruposControllerOpenApi;
 import com.algaworks.algafood.api.v1.model.GrupoModel;
 import com.algaworks.algafood.api.v1.model.input.GrupoInput;
+import com.algaworks.algafood.core.security.CheckSecurity;
 import com.algaworks.algafood.domain.model.Grupo;
 import com.algaworks.algafood.domain.service.GrupoService;
 import com.algaworks.algafood.repositories.GrupoRepository;
@@ -41,12 +42,14 @@ public class GrupoController implements GruposControllerOpenApi {
 	@Autowired
 	private GrupoInputDisassembler grupoInputDisassembler;
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
 	@GetMapping
 	public CollectionModel<GrupoModel> listar() {
 		return grupoModelAssembler.toCollectionModel(grupoRepository.findAll());
 	}
 	
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
 	@GetMapping("/{grupoId}")
 	public GrupoModel buscar(@PathVariable("grupoId") Long grupoId) {
 		return grupoModelAssembler.toModel(grupoService.buscarPorId(grupoId));
@@ -54,6 +57,7 @@ public class GrupoController implements GruposControllerOpenApi {
 	}
 	
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeEditar
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Grupo adicionar(@RequestBody @Valid GrupoInput grupo) {
@@ -62,6 +66,7 @@ public class GrupoController implements GruposControllerOpenApi {
 	}
 	
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeEditar
 	@PutMapping("/{grupoId}")
 	public Grupo atualizar(@PathVariable("grupoId") Long grupoId, @RequestBody @Valid GrupoInput grupo) {
 		
@@ -74,6 +79,7 @@ public class GrupoController implements GruposControllerOpenApi {
 	}
 	
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeEditar
 	@DeleteMapping("/{grupoId}")
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable("grupoId") Long grupoId) {

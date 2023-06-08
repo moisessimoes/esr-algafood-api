@@ -24,7 +24,7 @@ public class NotificacaoClientePedidoCanceladoListener {
 		
 		var mensagem = new Mensagem();
 		mensagem.setAssunto(event.getPedido().getRestaurante().getNome() + " - Pedido Cancelado!");
-		mensagem.setCorpo("pedido-cancelado.html");
+		mensagem.setCorpo("emails/pedido-cancelado.html");
 		
 		Map<String, Object> variaveisEmailTemplate = new HashMap<>();
 		variaveisEmailTemplate.put("pedido", event.getPedido());

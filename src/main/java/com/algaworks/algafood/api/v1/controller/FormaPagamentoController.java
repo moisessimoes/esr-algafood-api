@@ -29,6 +29,7 @@ import com.algaworks.algafood.api.v1.assembler.FormaPagamentoModelAssembler;
 import com.algaworks.algafood.api.v1.controller.openapi.controller.FormaPagamentoControllerOpenApi;
 import com.algaworks.algafood.api.v1.model.FormaPagamentoModel;
 import com.algaworks.algafood.api.v1.model.input.FormaPagamentoInput;
+import com.algaworks.algafood.core.security.CheckSecurity;
 import com.algaworks.algafood.domain.exception.FormaPagamentoNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.FormaPagamento;
@@ -51,6 +52,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 	@Autowired
 	private FormaPagamentoInputDisassembler formaPagamentoInputDisassembler;
 	
+	@CheckSecurity.FormaPagmento.PodeEditar
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public FormaPagamento cadastrar(@RequestBody @Valid FormaPagamentoInput formaPagamento) {
@@ -59,6 +61,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 	}
 	
 	
+	@CheckSecurity.FormaPagmento.PodeEditar
 	@PutMapping("/{formaPagamentoId}")
 	public FormaPagamento atualizar(@PathVariable Long formaPagamentoId, @RequestBody @Valid FormaPagamentoInput formaPagamento) {
 		
@@ -75,6 +78,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 	}
 	
 	
+	@CheckSecurity.FormaPagmento.PodeConsultar
 	@GetMapping("/{formaPagamentoId}")
 	public ResponseEntity<FormaPagamentoModel> buscar(@PathVariable Long formaPagamentoId, ServletWebRequest request) {
 		
@@ -110,6 +114,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 	}
 	
 	
+	@CheckSecurity.FormaPagmento.PodeConsultar
 	@GetMapping
 	public ResponseEntity<CollectionModel<FormaPagamentoModel>> listar(ServletWebRequest request) {
 		
@@ -171,6 +176,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
 	}
 	
 	
+	@CheckSecurity.FormaPagmento.PodeEditar
 	@DeleteMapping("/{formaPagamentoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void excluir(@PathVariable Long formaPagamentoId) {

@@ -24,7 +24,7 @@ public class NotificacaoClientePedidoConfirmadoListener {
 		
 		var mensagem = new Mensagem();
 		mensagem.setAssunto(event.getPedido().getRestaurante().getNome() + " - Pedido Confirmado");
-		mensagem.setCorpo("pedido-confirmado.html");
+		mensagem.setCorpo("emails/pedido-confirmado.html");
 		
 		Map<String, Object> variaveisEmailTemplate = new HashMap<>();
 		variaveisEmailTemplate.put("pedido", event.getPedido());
