@@ -47,10 +47,10 @@ public class CozinhaControllerV2 { //implements CozinhaControllerOpenApi {
 	private CozinhaRepository cozinhaRepository;
 	
 	@Autowired
-	private CozinhaModelAssemblerV2 cozinhaModelAssembler;
+	private CozinhaModelAssemblerV2 cozinhaModelAssemblerV2;
 	
 	@Autowired
-	private CozinhaInputDisassemblerV2 cozinhaInputDisassembler;
+	private CozinhaInputDisassemblerV2 cozinhaInputDisassemblerV2;
 	
 	@Autowired
 	private PagedResourcesAssembler<Cozinha> pagedResourcesAssembler; //19.15. Adicionando hypermedia em recursos com paginação
@@ -58,7 +58,7 @@ public class CozinhaControllerV2 { //implements CozinhaControllerOpenApi {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cozinha adicionar(@RequestBody @Valid CozinhaInputV2 cozinha) {
-		Cozinha kitchen = cozinhaInputDisassembler.toDomainObject(cozinha);
+		Cozinha kitchen = cozinhaInputDisassemblerV2.toDomainObject(cozinha);
 		return cozinhaService.salvar(kitchen);
 	}
 	
@@ -68,7 +68,7 @@ public class CozinhaControllerV2 { //implements CozinhaControllerOpenApi {
 		
 		Cozinha cozinhaAtual = cozinhaService.buscarPorId(cozinhaId);
 			
-		cozinhaInputDisassembler.copyToDomainObject(cozinha, cozinhaAtual);
+		cozinhaInputDisassemblerV2.copyToDomainObject(cozinha, cozinhaAtual);
 		//BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
 		return cozinhaService.salvar(cozinhaAtual);
 	}
@@ -90,7 +90,7 @@ public class CozinhaControllerV2 { //implements CozinhaControllerOpenApi {
 		
 		//19.15. Adicionando hypermedia em recursos com paginação
 		
-		PagedModel<CozinhaModelV2> pagedCozinhasModel = pagedResourcesAssembler.toModel(cozinhasPage, cozinhaModelAssembler);
+		PagedModel<CozinhaModelV2> pagedCozinhasModel = pagedResourcesAssembler.toModel(cozinhasPage, cozinhaModelAssemblerV2);
 		
 		return pagedCozinhasModel;
 	}
@@ -108,7 +108,7 @@ public class CozinhaControllerV2 { //implements CozinhaControllerOpenApi {
 		ServletServerHttpRequest server = new ServletServerHttpRequest(req);
 		
 		try {
-			return cozinhaModelAssembler.toModel(cozinhaService.buscarPorId(id));
+			return cozinhaModelAssemblerV2.toModel(cozinhaService.buscarPorId(id));
 			//return cozinhaRepository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 		} catch (MethodArgumentTypeMismatchException e) {
 			Throwable rootCause = ExceptionUtils.getRootCause(e);

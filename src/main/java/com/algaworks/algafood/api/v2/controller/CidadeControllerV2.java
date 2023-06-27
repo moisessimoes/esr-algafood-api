@@ -57,17 +57,17 @@ public class CidadeControllerV2 { //20.11. Implementando o versionamento da API 
 	private CidadeRepository cidadeRepository;
 	
 	@Autowired
-	private CidadeModelAssemblerV2 cidadeModelAssembler;
+	private CidadeModelAssemblerV2 cidadeModelAssemblerV2;
 	
 	@Autowired
-	private CidadeInputDisassemblerV2 cidadeInputDisassembler;
+	private CidadeInputDisassemblerV2 cidadeInputDisassemblerV2;
 	
 	@GetMapping//(produces = AlgaMediaType.V2_APPLICATION_JSON_VALUE)
 	public CollectionModel<CidadeModelV2> listar() {
 		
 		List<Cidade> cidades = cidadeRepository.findAll();
 		
-		return cidadeModelAssembler.toCollectionModel(cidades);
+		return cidadeModelAssemblerV2.toCollectionModel(cidades);
 		
 		//19.10. Adicionando hypermedia na representação de recursos de coleção
 		
@@ -82,7 +82,7 @@ public class CidadeControllerV2 { //20.11. Implementando o versionamento da API 
 		
 		 Cidade cidade = cidadeService.buscarPorId(cidadeId);
 		
-		 CidadeModelV2 cidadeModel = cidadeModelAssembler.toModel(cidade);
+		 CidadeModelV2 cidadeModel = cidadeModelAssemblerV2.toModel(cidade);
 		 
 		 //19.7. Adicionando hypermedia na representação de recurso único com HAL
 		 //cidadeModel.add(Link.of("http://localhost:9090/cidades/1"));
@@ -111,10 +111,10 @@ public class CidadeControllerV2 { //20.11. Implementando o versionamento da API 
 		
 		try {
 			
-			Cidade city = cidadeInputDisassembler.toDomainObject(cidade);
+			Cidade city = cidadeInputDisassemblerV2.toDomainObject(cidade);
 			city = cidadeService.salvar(city);
 			
-			CidadeModelV2 cidadeModel = cidadeModelAssembler.toModel(city);
+			CidadeModelV2 cidadeModel = cidadeModelAssemblerV2.toModel(city);
 			
 			ResourceUriHelper.addUriInResponseHeader(cidadeModel.getIdCidade());
 			
@@ -132,7 +132,7 @@ public class CidadeControllerV2 { //20.11. Implementando o versionamento da API 
 		Cidade city = cidadeService.buscarPorId(cidadeId);
 		//BeanUtils.copyProperties(cidade, city, "id");
 		
-		cidadeInputDisassembler.copyToDomainObject(cidade, city);
+		cidadeInputDisassemblerV2.copyToDomainObject(cidade, city);
 		
 		try {
 			return cidadeService.salvar(city);
