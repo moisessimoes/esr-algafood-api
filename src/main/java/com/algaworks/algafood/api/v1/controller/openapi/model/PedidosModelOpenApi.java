@@ -6,16 +6,14 @@ import org.springframework.hateoas.Links;
 
 import com.algaworks.algafood.api.v1.model.PedidoResumoModel;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel("PedidosModel")
+//@ApiModel("PedidosModel")
 public class PedidosModelOpenApi { //19.45. Desafio: corrigindo a documentação dos endpoint de pedidos (paginação)
 	
 	private PedidoEmbeddedModelOpenApi _embedded;
 	private Links _links;
 	private PageModelOpenApi page;
 	
-	@ApiModel("PedidosEmbeddedModel")
+	//@ApiModel("PedidosEmbeddedModel")
 	public class PedidoEmbeddedModelOpenApi {
 		
 		private List<PedidoResumoModel> pedidos;

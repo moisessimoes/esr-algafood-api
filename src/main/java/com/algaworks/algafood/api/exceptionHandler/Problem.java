@@ -6,32 +6,29 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-@ApiModel("Problema")
+//@ApiModel("Problema")
 @JsonInclude(Include.NON_NULL)
 public class Problem {
 	
-	@ApiModelProperty(position = 0)
+	//@ApiModelProperty(position = 0)
 	private Integer status;
 	
-	@ApiModelProperty(position = 1)
+	//@ApiModelProperty(position = 1)
 	private OffsetDateTime timestamp;
 	
-	@ApiModelProperty(position = 2)
+	//@ApiModelProperty(position = 2)
 	private String type;
 	
-	@ApiModelProperty(position = 3)
+	//@ApiModelProperty(position = 3)
 	private String title;
 	
-	@ApiModelProperty(position = 4)
+	//@ApiModelProperty(position = 4)
 	private String detail;
 	
-	@ApiModelProperty(position = 5)
+	//@ApiModelProperty(position = 5)
 	private String userMessage;
 	
-	@ApiModelProperty(position = 6)
+	//@ApiModelProperty(position = 6)
 	private List<Field> fields;
 	
 	public Problem() {}

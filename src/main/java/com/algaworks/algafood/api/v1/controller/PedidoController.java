@@ -39,9 +39,6 @@ import com.algaworks.algafood.repositories.PedidoRepository;
 import com.algaworks.algafood.specification.PedidoSpecs;
 import com.google.common.collect.ImmutableMap;
 
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-
 @RestController
 @RequestMapping(path = "/v1/pedidos", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PedidoController implements PedidoControllerOpenApi {
@@ -88,9 +85,9 @@ public class PedidoController implements PedidoControllerOpenApi {
     
     
     @CheckSecurity.Pedidos.PodePesquisar
-    @ApiImplicitParams({ //18.26. Descrevendo parâmetros implícitos em operações
-    	@ApiImplicitParam(name = "campos", value = "Nomes das propriedades para filtrar na resposta, separados por vírgula.", paramType = "query", type = "string")
-    })
+//    @ApiImplicitParams({ //18.26. Descrevendo parâmetros implícitos em operações
+//    	@ApiImplicitParam(name = "campos", value = "Nomes das propriedades para filtrar na resposta, separados por vírgula.", paramType = "query", type = "string")
+//    })
     @GetMapping
     public PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filtro, @PageableDefault(size = 10) Pageable pageable) {
     	
@@ -131,9 +128,9 @@ public class PedidoController implements PedidoControllerOpenApi {
 
     
     @CheckSecurity.Pedidos.PodeBuscar
-    @ApiImplicitParams({ //18.26. Descrevendo parâmetros implícitos em operações
-    	@ApiImplicitParam(name = "campos", value = "Nomes das propriedades para filtrar na resposta, separados por vírgula.", paramType = "query", type = "string")
-    })
+//    @ApiImplicitParams({ //18.26. Descrevendo parâmetros implícitos em operações
+//    	@ApiImplicitParam(name = "campos", value = "Nomes das propriedades para filtrar na resposta, separados por vírgula.", paramType = "query", type = "string")
+//    })
     @GetMapping("/{codigoPedido}")
     public PedidoModel buscar(@PathVariable String codigoPedido) {
         Pedido pedido = pedidoService.buscarPorId(codigoPedido);

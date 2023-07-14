@@ -6,15 +6,13 @@ import org.springframework.hateoas.Links;
 
 import com.algaworks.algafood.api.v1.model.PermissaoModel;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel("GrupoPermissoesModel")
+//@ApiModel("GrupoPermissoesModel")
 public class GrupoPermissoesModelOpenApi { //19.44. Desafio: corrigindo a documentação dos endpoints de grupos
 	
 	private GrupoPermissoesEmbeddedModelOpenApi _embedded;
 	private Links _links;
 	
-	@ApiModel("GruposPermissoesEmbeddedModel")
+	//@ApiModel("GruposPermissoesEmbeddedModel")
 	public class GrupoPermissoesEmbeddedModelOpenApi {
 		
 		private List<PermissaoModel> permissoes;

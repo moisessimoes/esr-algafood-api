@@ -6,15 +6,13 @@ import org.springframework.hateoas.Links;
 
 import com.algaworks.algafood.api.v1.model.UsuarioModel;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel("UsuariosModel")
+//@ApiModel("UsuariosModel")
 public class UsuariosModelOpenApi { //19.47. Desafio: corrigindo a documentação dos endpoints de restaurantes e usuários
 	
 	private UsuarioEmbeddedModelOpenApi _embedded;
 	private Links _links;
 	
-	@ApiModel("UsuariosEmbeddedModel")
+	//@ApiModel("UsuariosEmbeddedModel")
 	public class UsuarioEmbeddedModelOpenApi {
 		
 		private List<UsuarioModel> usuarios;

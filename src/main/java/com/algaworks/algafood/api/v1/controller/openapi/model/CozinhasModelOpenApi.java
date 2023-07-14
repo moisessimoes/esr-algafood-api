@@ -6,9 +6,7 @@ import org.springframework.hateoas.Links;
 
 import com.algaworks.algafood.api.v1.model.CozinhaModel;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel("CozinhasModel")
+//@ApiModel("CozinhasModel")
 public class CozinhasModelOpenApi  {
 	
 	//Isso era referente a primeira correção feita, mas não vale mais. extends PagedModelOpenApi<CozinhaModel>
@@ -21,7 +19,7 @@ public class CozinhasModelOpenApi  {
 	private Links _links;
 	private PageModelOpenApi page;
 	
-	@ApiModel("CidadesEmbeddedModel")
+	//@ApiModel("CidadesEmbeddedModel")
 	public class CozinhasEmbeddedModelOpenApi {
 		
 		private List<CozinhaModel> cozinhas;

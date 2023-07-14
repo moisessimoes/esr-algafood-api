@@ -6,15 +6,13 @@ import org.springframework.hateoas.Links;
 
 import com.algaworks.algafood.api.v1.model.ProdutoModel;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel("ProdutosModel")
+//@ApiModel("ProdutosModel")
 public class ProdutosModelOpenApi { //19.46. Desafio: corrigindo a documentação dos endpoints de produtos
 	
 	private ProdutoEmbeddedModelOpenApi _embedded;
 	private Links _links;
 	
-	@ApiModel("ProdutosEmbeddedModel")
+	//@ApiModel("ProdutosEmbeddedModel")
 	public class ProdutoEmbeddedModelOpenApi {
 		
 		private List<ProdutoModel> produtos;

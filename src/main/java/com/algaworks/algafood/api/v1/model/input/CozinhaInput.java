@@ -2,11 +2,9 @@ package com.algaworks.algafood.api.v1.model.input;
 
 import javax.validation.constraints.NotBlank;
 
-import io.swagger.annotations.ApiModelProperty;
-
 public class CozinhaInput {
 	
-	@ApiModelProperty(position = 0, example = "Italiana", required = true)
+	//@ApiModelProperty(position = 0, example = "Italiana", required = true)
 	@NotBlank
 	private String nome;
 

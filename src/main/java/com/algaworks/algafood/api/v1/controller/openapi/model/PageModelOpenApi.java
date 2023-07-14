@@ -1,21 +1,18 @@
 package com.algaworks.algafood.api.v1.controller.openapi.model;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-@ApiModel("PageModel")
+//@ApiModel("PageModel")
 public class PageModelOpenApi {
 	
-	@ApiModelProperty(example = "10", value = "Número de elementos por página")
+	//@ApiModelProperty(example = "10", value = "Número de elementos por página")
 	private Long size;
 	
-	@ApiModelProperty(example = "50", value = "Total de elementos")
+	//@ApiModelProperty(example = "50", value = "Total de elementos")
 	private Long totalElements;
 	
-	@ApiModelProperty(example = "5", value = "Total de páginas")
+	//@ApiModelProperty(example = "5", value = "Total de páginas")
 	private Long totalPages;
 	
-	@ApiModelProperty(example = "0", value = "Número da página (começa em 0)")
+	//@ApiModelProperty(example = "0", value = "Número da página (começa em 0)")
 	private Long number;
 
 	public Long getSize() {

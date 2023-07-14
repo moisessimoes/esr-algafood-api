@@ -1,13 +1,11 @@
 package com.algaworks.algafood.api.v1.controller.openapi.model;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel("Links")
+//@ApiModel("Links")
 public class LinksModelOpenApi { //19.39. Corrigindo as propriedades de links na documentação
 	
 	private LinkModel rel;
 	
-	@ApiModel("Link")
+	//@ApiModel("Link")
 	public class LinkModel {
 		
 		private String href;

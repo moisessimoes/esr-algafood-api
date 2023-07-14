@@ -4,11 +4,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
-
 public class CidadeInput {
 	
-	@ApiModelProperty(position = 0, example = "Detroit", required = true)
+	//@ApiModelProperty(position = 0, example = "Detroit", required = true)
 	@NotBlank
 	private String nome;
 	

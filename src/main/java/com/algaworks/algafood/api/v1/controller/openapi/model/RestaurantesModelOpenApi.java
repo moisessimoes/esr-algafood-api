@@ -6,15 +6,13 @@ import org.springframework.hateoas.Links;
 
 import com.algaworks.algafood.api.v1.model.RestauranteBasicoModel;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel("RestaurantesModel")
+//@ApiModel("RestaurantesModel")
 public class RestaurantesModelOpenApi { //19.47. Desafio: corrigindo a documentação dos endpoints de restaurantes e usuários
 	
 	private RestauranteEmbeddedModelOpenApi _embedded;
 	private Links _links;
 	
-	@ApiModel("RestaurantesEmbeddedModel")
+	//@ApiModel("RestaurantesEmbeddedModel")
 	public class RestauranteEmbeddedModelOpenApi {
 		
 		private List<RestauranteBasicoModel> restaurantes;

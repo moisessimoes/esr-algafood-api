@@ -3,18 +3,16 @@ package com.algaworks.algafood.api.v1.model;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-import io.swagger.annotations.ApiModelProperty;
-
 @Relation("Usuarios")
 public class UsuarioModel extends RepresentationModel<UsuarioModel> {
 	
-	@ApiModelProperty(position = 0, example = "1")
+	//@ApiModelProperty(position = 0, example = "1")
 	private Long id;
 	
-	@ApiModelProperty(position = 1, example = "Markus")
+	//@ApiModelProperty(position = 1, example = "Markus")
 	private String nome;
 	
-	@ApiModelProperty(position = 2, example = "markus@mail.com")
+	//@ApiModelProperty(position = 2, example = "markus@mail.com")
 	private String email;
 	
 	public Long getId() {

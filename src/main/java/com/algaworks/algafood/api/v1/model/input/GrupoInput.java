@@ -2,11 +2,9 @@ package com.algaworks.algafood.api.v1.model.input;
 
 import javax.validation.constraints.NotBlank;
 
-import io.swagger.annotations.ApiModelProperty;
-
 public class GrupoInput {
 
-	@ApiModelProperty(example = "Gerente")
+	//@ApiModelProperty(example = "Gerente")
 	@NotBlank
 	private String nome;
 

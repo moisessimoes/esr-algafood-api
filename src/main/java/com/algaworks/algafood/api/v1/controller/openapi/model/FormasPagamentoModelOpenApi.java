@@ -6,15 +6,13 @@ import org.springframework.hateoas.Links;
 
 import com.algaworks.algafood.api.v1.model.FormaPagamentoModel;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel("FormasPagamentoModel")
+//@ApiModel("FormasPagamentoModel")
 public class FormasPagamentoModelOpenApi { //19.43. Desafio: corrigindo a documentação dos endpoints de formas de pagamento
 	
 	private FormaPagamentoEmbeddedModelOpenApi _embedded;
 	private Links _links;
 	
-	@ApiModel("FormasPagamentosEmbeddedModel")
+	//@ApiModel("FormasPagamentosEmbeddedModel")
 	public class FormaPagamentoEmbeddedModelOpenApi {
 		
 		private List<FormaPagamentoModel> formasPagamento;

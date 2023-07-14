@@ -6,15 +6,13 @@ import org.springframework.hateoas.Links;
 
 import com.algaworks.algafood.api.v1.model.CidadeModel;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel("CidadesModel")
+//@ApiModel("CidadesModel")
 public class CidadesModelOpenApi { //19.40. Corrigindo a documentação dos endpoints de cidades
 	
 	private CidadeEmbeddedModelOpenApi _embedded;
 	private Links _links;
 	
-	@ApiModel("CidadesEmbeddedModel")
+	//@ApiModel("CidadesEmbeddedModel")
 	public class CidadeEmbeddedModelOpenApi {
 		
 		private List<CidadeModel> cidades;

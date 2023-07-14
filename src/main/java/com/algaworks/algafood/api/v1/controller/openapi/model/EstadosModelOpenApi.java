@@ -6,15 +6,13 @@ import org.springframework.hateoas.Links;
 
 import com.algaworks.algafood.api.v1.model.EstadoModel;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel("EstadosModel")
+//@ApiModel("EstadosModel")
 public class EstadosModelOpenApi { //19.42. Desafio: corrigindo a documentação dos endpoints de estados
 	
 	private EstadoEmbeddedModelOpenApi _embedded;
 	private Links _links;
 	
-	@ApiModel("EstadosEmbeddedModel")
+	//@ApiModel("EstadosEmbeddedModel")
 	public class EstadoEmbeddedModelOpenApi {
 		
 		private List<EstadoModel> estados;

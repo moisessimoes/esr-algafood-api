@@ -16,9 +16,7 @@ import com.algaworks.algafood.core.security.CheckSecurity;
 import com.algaworks.algafood.domain.model.Permissao;
 import com.algaworks.algafood.repositories.PermissaoRepository;
 
-import io.swagger.annotations.Api;
-
-@Api(tags = "Permissões")
+//@Api(tags = "Permissões")
 @RestController
 @RequestMapping(path = "/v1/permissoes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PermissaoController implements PermissaoControllerOpenApi {

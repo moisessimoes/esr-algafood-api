@@ -6,26 +6,24 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import io.swagger.annotations.ApiModelProperty;
-
 public class PedidoInput {
 	
-	@ApiModelProperty(position = 0)
+	//@ApiModelProperty(position = 0)
 	@Valid
 	@NotNull
 	private RestauranteIdInput restaurante;
 	
-	@ApiModelProperty(position = 1)
+	//@ApiModelProperty(position = 1)
 	@Valid
 	@NotNull
 	private FormaPagamentoIdInput formaPagamento;
 	
-	@ApiModelProperty(position = 2)
+	//@ApiModelProperty(position = 2)
 	@Valid
 	@NotNull
 	private EnderecoInput enderecoEntrega;
 	
-	@ApiModelProperty(position = 3)
+	//@ApiModelProperty(position = 3)
 	@Valid
 	@NotNull
 	@Size(min = 1)
