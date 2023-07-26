@@ -5,13 +5,18 @@ import java.time.OffsetDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class VendaDiariaFilter {
 	
+	@Schema(example = "1", description = "ID do restaurante")
 	private Long restauranteId;
 	
+	@Schema(example = "2023-07-26T00:00:00Z", description = "Data inicial da criação do pedido")
 	@DateTimeFormat(iso = ISO.DATE_TIME)
 	private OffsetDateTime dataCriacaoInicio;
 	
+	@Schema(example = "2023-07-26T00:00:00Z", description = "Data final da criação do pedido")
 	@DateTimeFormat(iso = ISO.DATE_TIME)
 	private OffsetDateTime dataCriacaoFim;
 

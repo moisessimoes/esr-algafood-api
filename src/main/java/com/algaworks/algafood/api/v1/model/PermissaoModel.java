@@ -3,11 +3,18 @@ package com.algaworks.algafood.api.v1.model;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Relation(collectionRelation = "permissoes")
 public class PermissaoModel extends RepresentationModel<PermissaoModel> {
 	
+	@Schema(example = "1")
 	private Long id;
+	
+	@Schema(example = "Cadastro")
     private String nome;
+	
+	@Schema(example = "Realiza cadastros")
     private String descricao;
     
 	public Long getId() {

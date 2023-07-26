@@ -6,18 +6,24 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class ProdutoInput {
 	
+	@Schema(example = "Hot Dog", required = true)
 	@NotBlank
 	private String nome;
 	
+	@Schema(example = "Hot Dog completo", required = true)
 	@NotBlank
 	private String descricao;
 	
+	@Schema(example = "10.00", required = true)
 	@NotNull
 	@PositiveOrZero
 	private BigDecimal preco;
 	
+	@Schema(example = "true", required = true)
 	@NotNull
 	private Boolean ativo;
 

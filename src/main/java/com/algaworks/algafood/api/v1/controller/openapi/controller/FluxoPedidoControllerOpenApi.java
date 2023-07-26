@@ -2,30 +2,36 @@ package com.algaworks.algafood.api.v1.controller.openapi.controller;
 
 import org.springframework.http.ResponseEntity;
 
-//@Api(tags = "Fluxo Pedido")
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@SecurityRequirement(name = "security_auth")
+@Tag(name = "Pedidos")
 public interface FluxoPedidoControllerOpenApi {
 	
-//	@ApiOperation("Confirmação de pedido")
 //	@ApiResponses({
 //		@ApiResponse(code = 204, message = "Pedido confirmado com sucesso"),
 //		@ApiResponse(code = 404, message = "Pedido não encontrado", response = Problem.class)
 //	})
-	public ResponseEntity<Void> confirmar(String codigoPedido);//@ApiParam(value = "Código do pedido", example = "f9981ca4-5a5e-4da3-af04-933861df3e55", required = true) String codigoPedido);
+	@Operation(summary = "Confirmação de pedido")
+	public ResponseEntity<Void> confirmar(@Parameter(description = "Código do pedido", example = "f9981ca4-5a5e-4da3-af04-933861df3e55", required = true) String codigoPedido);
 	
 	
-//	@ApiOperation("Registrar entrega de pedido")
 //	@ApiResponses({
 //		@ApiResponse(code = 204, message = "Entrega de pedido registrada com sucesso"),
 //		@ApiResponse(code = 404, message = "Pedido não encontrado", response = Problem.class)
 //	})
-	public ResponseEntity<Void> entregar(String codigoPedido);//@ApiParam(value = "Código do pedido", example = "f9981ca4-5a5e-4da3-af04-933861df3e55", required = true) String codigoPedido);
+	@Operation(summary = "Registra entrega de pedido")
+	public ResponseEntity<Void> entregar(@Parameter(description = "Código do pedido", example = "f9981ca4-5a5e-4da3-af04-933861df3e55", required = true) String codigoPedido);
 	
 	
-//	@ApiOperation("Cancelamento de pedido")
 //	@ApiResponses({
 //		@ApiResponse(code = 204, message = "Pedido cancelado com sucesso"),
 //		@ApiResponse(code = 404, message = "Pedido não encontrado", response = Problem.class)
 //	})
-	public ResponseEntity<Void> cancelar(String codigoPedido);//@ApiParam(value = "Código do pedido", example = "f9981ca4-5a5e-4da3-af04-933861df3e55", required = true) String codigoPedido);
+	@Operation(summary = "Cancelamento de pedido")
+	public ResponseEntity<Void> cancelar(@Parameter(description = "Código do pedido", example = "f9981ca4-5a5e-4da3-af04-933861df3e55", required = true) String codigoPedido);
 
 }

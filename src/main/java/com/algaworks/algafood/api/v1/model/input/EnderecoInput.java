@@ -4,24 +4,26 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class EnderecoInput {
 	
-	//@ApiModelProperty(example = "58540000")
+	@Schema(example = "12345678", required = true)
 	@NotBlank
 	private String cep;
 	
-	//@ApiModelProperty(example = "Rua ABCDE")
+	@Schema(example = "Rua ABC", required = true)
 	@NotBlank
 	private String logradouro;
 	
-	//@ApiModelProperty(example = "123")
+	@Schema(example = "123", required = true)
 	@NotBlank
 	private String numero;
 	
-	//@ApiModelProperty(example = "Ao lado do banco RK800")
+	@Schema(example = "Ao lado da padaria ABC")
 	private String complemento;
 	
-	//@ApiModelProperty(example = "Bairro ABC")
+	@Schema(example = "Bairro ABC", required = true)
 	@NotBlank
 	private String bairro;
 	

@@ -5,22 +5,24 @@ import java.math.BigDecimal;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Relation(collectionRelation = "produtos")
 public class ProdutoModel extends RepresentationModel<ProdutoModel> {
 	
-	//@ApiModelProperty(position = 0, example = "1")
+	@Schema(example = "1")
 	private Long id;
 	
-	//@ApiModelProperty(position = 1, example = "Cerveja Budweiser")
+	@Schema(example = "Heineken")
 	private String nome;
 	
-	//@ApiModelProperty(position = 2, example = "Cerveja Budweiser")
+	@Schema(example = "Cerveja Heineken")
 	private String descricao;
 	
-	//@ApiModelProperty(position = 3, example = "7.00")
+	@Schema(example = "13.00")
 	private BigDecimal preco;
 	
-	//@ApiModelProperty(position = 4, example = "true")
+	@Schema(example = "true")
 	private Boolean ativo;
 
 	public Long getId() {

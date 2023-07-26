@@ -3,13 +3,15 @@ package com.algaworks.algafood.api.v1.model;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Relation(collectionRelation = "grupos")
 public class GrupoModel extends RepresentationModel<GrupoModel> {
 	
-	//@ApiModelProperty(position = 0, example = "1")
+	@Schema(example = "1")
 	private Long id;
 	
-	//@ApiModelProperty(position = 1, example = "Gerente")
+	@Schema(example = "Gerente")
 	private String nome;
 	
 	public Long getId() {

@@ -2,9 +2,11 @@ package com.algaworks.algafood.api.v1.model.input;
 
 import javax.validation.constraints.NotBlank;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class FormaPagamentoInput {
 
-	//@ApiModelProperty(example = "Bitcoin")
+	@Schema(example = "PIX", required = true)
 	@NotBlank
 	private String descricao;
 

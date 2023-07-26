@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.algaworks.algafood.api.v1.AlgaLinks;
 import com.algaworks.algafood.core.security.AlgaSecurity;
 
-//@Api(tags = "Ponto de Entrada Raíz")
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Ponto de Entrada Raíz")
 @RestController
 @RequestMapping(path = "/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RootEntryPointController { //19.36. Implementando o Root Entry Point da API
@@ -22,6 +25,7 @@ public class RootEntryPointController { //19.36. Implementando o Root Entry Poin
 	private AlgaSecurity algaSecurity; 
 	
 	@GetMapping
+	@Operation(hidden = true)
 	public RootEntryPointModel root() {
 		
 		var rootEntryModel = new RootEntryPointModel();

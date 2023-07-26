@@ -7,11 +7,15 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class RestauranteInput {
 	
+	@Schema(example = "Sal e Pimenta", required = true)
 	@NotBlank
 	private String nome;
 	
+	@Schema(example = "2.50", required = true)
 	@NotNull
 	@PositiveOrZero
 	private BigDecimal taxaFrete;

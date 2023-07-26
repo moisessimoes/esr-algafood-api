@@ -6,29 +6,31 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-//@ApiModel("Problema")
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @JsonInclude(Include.NON_NULL)
+@Schema(name = "Problema")
 public class Problem {
 	
-	//@ApiModelProperty(position = 0)
+	@Schema(example = "400")
 	private Integer status;
 	
-	//@ApiModelProperty(position = 1)
+	@Schema(example = "2023-07-19T21:33:10.9010316619Z")
 	private OffsetDateTime timestamp;
 	
-	//@ApiModelProperty(position = 2)
+	@Schema(example = "http://algafood.com.br/dados-invalidos")
 	private String type;
 	
-	//@ApiModelProperty(position = 3)
+	@Schema(example = "Dados inválidos")
 	private String title;
 	
-	//@ApiModelProperty(position = 4)
+	@Schema(example = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.")
 	private String detail;
 	
-	//@ApiModelProperty(position = 5)
+	@Schema(example = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.")
 	private String userMessage;
 	
-	//@ApiModelProperty(position = 6)
+	@Schema(description = "Lista de campos que geraram erro")
 	private List<Field> fields;
 	
 	public Problem() {}

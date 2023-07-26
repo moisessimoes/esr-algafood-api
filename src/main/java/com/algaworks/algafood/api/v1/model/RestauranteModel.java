@@ -5,20 +5,22 @@ import java.math.BigDecimal;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Relation(collectionRelation = "restaurantes")
 public class RestauranteModel extends RepresentationModel<RestauranteModel> {
 	
 	//Projeção de recursos com @JsonView do Jackson
 	
-	//@ApiModelProperty(example = "1")
+	@Schema(example = "1")
 	//@JsonView({RestauranteView.Resumo.class, RestauranteView.ApenasNome.class})
 	private Long id;
 	
-	//@ApiModelProperty(example = "Brasileira")
+	@Schema(example = "Turca")
 	//@JsonView({RestauranteView.Resumo.class, RestauranteView.ApenasNome.class})
 	private String nome;
 	
-	//@ApiModelProperty(example = "5.00")
+	@Schema(example = "2.50")
 	//@JsonView(RestauranteView.Resumo.class)
 	private BigDecimal taxaFrete;
 	

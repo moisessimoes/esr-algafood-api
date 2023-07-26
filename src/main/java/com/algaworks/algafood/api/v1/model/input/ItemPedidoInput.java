@@ -4,19 +4,21 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class ItemPedidoInput {
 	
-	//@ApiModelProperty(position = 0, example = "1")
+	@Schema(example = "1", required = true)
 	@NotNull
 	private Long produtoId;
 	
-	//@ApiModelProperty(position = 1, example = "1")
+	@Schema(example = "1", required = true)
 	@NotNull
 	@Positive
 	@Min(value = 1)
 	private Integer quantidade;
 	
-	//@ApiModelProperty(position = 2, example = "Uma observação")
+	@Schema(example = "Observação...")
 	private String observacao;
 
 	public Long getProdutoId() {

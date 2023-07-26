@@ -7,46 +7,51 @@ import com.algaworks.algafood.api.v1.model.input.SenhaInput;
 import com.algaworks.algafood.api.v1.model.input.UsuarioComSenhaInput;
 import com.algaworks.algafood.api.v1.model.input.UsuarioInput;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-//@Api(tags = "Usuários")
 @SecurityRequirement(name = "security_auth")
+@Tag(name = "Usuários")
 public interface UsuariosControllerOpenApi {
 	
-//	@ApiOperation("Cadastra um usuário")
 //	@ApiResponses({
 //		@ApiResponse(code = 201, message = "Usuário cadastrado"),
 //	})
-	public UsuarioModel salvar(UsuarioComSenhaInput usuario);//@ApiParam(name = "corpo", value = "Representação de um novo usuário", required = true) UsuarioComSenhaInput usuario);
+	@Operation(summary = "Adiciona um novo usuário")
+	public UsuarioModel salvar(@RequestBody(description = "Representação de um novo usuário", required = true) UsuarioComSenhaInput usuario);
 	
 	
-	//@ApiOperation("Lista os usuários")
+	@Operation(summary = "Lista os usuário")
 	public CollectionModel<UsuarioModel> listar();
 	
 	
-//	@ApiOperation("Busca um usuário por ID")
 //	@ApiResponses({
 //		@ApiResponse(code = 400, message = "ID do usuário inválido", response = Problem.class),
 //		@ApiResponse(code = 404, message = "Usuário não encontrado", response = Problem.class)
 //	})
-	public UsuarioModel buscar(Long usuarioId);//@ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId);
+	@Operation(summary = "Busca um usuário por ID")
+	public UsuarioModel buscar(@Parameter(description = "ID do usuário", example = "1", required = true) Long usuarioId);
 	
 	
-//	@ApiOperation("Atualiza um usuário por ID")
 //	@ApiResponses({
 //		@ApiResponse(code = 200, message = "Usuário atualizado"),
 //		@ApiResponse(code = 404, message = "Usuário não encontrado", response = Problem.class)
 //	})
-    public UsuarioModel atualizar(Long usuarioId, UsuarioInput usuarioInput);//@ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId, 
-    							  //@ApiParam(name = "corpo", value = "Representação de um usuário com os novos dados", required = true) UsuarioInput usuarioInput);
+	@Operation(summary = "Atualiza um usuário por ID")
+    public UsuarioModel atualizar(@Parameter(description = "ID do usuário", example = "1", required = true) Long usuarioId, 
+    							  @RequestBody(description = "Representação de um usuário com novos dados", required = true) UsuarioInput usuarioInput);
+    							  
     
 	
-//	@ApiOperation("Atualiza a senha de um usuário")
 //	@ApiResponses({
 //		@ApiResponse(code = 204, message = "Senha alterada com sucesso"),
 //		@ApiResponse(code = 404, message = "Usuário não encontrado", response = Problem.class)
 //	})
-    public void alterarSenha(Long usuarioId, SenhaInput senha);//@ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId, 
-    						 //@ApiParam(name = "corpo", value = "Representação de uma nova senha", required = true) SenhaInput senha);
+	@Operation(summary = "Atualiza a senha de um usuário por ID")
+    public void alterarSenha(@Parameter(description = "ID do usuário", example = "1", required = true) Long usuarioId, 
+    						 @RequestBody(description = "Representação de uma nova senha", required = true) SenhaInput senha);
 	
 }

@@ -8,22 +8,18 @@ import javax.validation.constraints.Size;
 
 public class PedidoInput {
 	
-	//@ApiModelProperty(position = 0)
 	@Valid
 	@NotNull
 	private RestauranteIdInput restaurante;
 	
-	//@ApiModelProperty(position = 1)
 	@Valid
 	@NotNull
 	private FormaPagamentoIdInput formaPagamento;
 	
-	//@ApiModelProperty(position = 2)
 	@Valid
 	@NotNull
 	private EnderecoInput enderecoEntrega;
 	
-	//@ApiModelProperty(position = 3)
 	@Valid
 	@NotNull
 	@Size(min = 1)

@@ -1,8 +1,14 @@
 package com.algaworks.algafood.api.exceptionHandler;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(example = "Campos")
 public class Field {
 	
+	@Schema(example = "preco")
 	private String name;
+	
+	@Schema(example = "O preço é inválido.")
 	private String userMessage;
 	
 	public Field() {}
