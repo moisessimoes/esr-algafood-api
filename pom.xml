@@ -25,12 +25,13 @@
     <!-- 21.4. Configurando o appender do Loggly no Logback -->
     <!-- <logback-ext-loggly.version>0.1.5</logback-ext-loggly.version> -->
     <oauth2-oidc-sdk.version>6.21.2</oauth2-oidc-sdk.version>
-    <spring-security-oauth2.version>2.5.2.RELEASE</spring-security-oauth2.version>
-	<spring-security-jwt.version>1.0.11.RELEASE</spring-security-jwt.version>
+    <!-- <spring-security-oauth2.version>2.5.2.RELEASE</spring-security-oauth2.version> -->
+	<!-- <spring-security-jwt.version>1.0.11.RELEASE</spring-security-jwt.version> -->
 	
 	<!-- 24.11. Construindo a imagem Docker pelo Maven -->
 	<dockerfile-maven-version>1.4.13</dockerfile-maven-version>
 	<springdoc.version>1.6.9</springdoc.version>
+	<springauthserver.version>0.3.1</springauthserver.version>	
   </properties>
 
   <dependencies>
@@ -224,6 +225,12 @@
 		
 		<dependency>
 			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-authorization-server</artifactId>
+			<version>${springauthserver.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -240,7 +247,7 @@
     		<version>${oauth2-oidc-sdk.version}</version>
 		</dependency>
 		
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth2</artifactId>
 			<version>${spring-security-oauth2.version}</version>
@@ -250,7 +257,7 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-jwt</artifactId>
 			<version>${spring-security-jwt.version}</version>
-		</dependency>
+		</dependency> -->
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

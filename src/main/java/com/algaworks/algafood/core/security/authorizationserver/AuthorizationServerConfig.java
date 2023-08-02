@@ -1,220 +1,220 @@
 package com.algaworks.algafood.core.security.authorizationserver;
 
-import java.security.KeyPair;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Arrays;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.time.Duration;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.CompositeTokenGranter;
-import org.springframework.security.oauth2.provider.TokenGranter;
-import org.springframework.security.oauth2.provider.approval.ApprovalStore;
-import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
-import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
-import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2TokenFormat;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
+import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.nimbusds.jose.JWSAlgorithm;
+import com.algaworks.algafood.repositories.UsuarioRepository;
 import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 
-@SuppressWarnings("deprecation")
 @Configuration
-@EnableAuthorizationServer
-public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
+public class AuthorizationServerConfig {
 	
-	//22.8. Criando o projeto do Authorization Server com Spring Security OAuth2
-	
-	/*A maioria do que está sendo usado aqui está depreciado, mas em um modulo
-	 * posterior, isso será corrigido para uma versão mais atualizada*/
-	
-	@Autowired
-	private UserDetailsService UserDetailsService;
-	
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	
-	//23.10. Desafio: criando bean de propriedades de configuração do KeyStore
-	@Autowired
-	private JwtKeyStoreProperties jwtKeyStoreProperties;
-	
-//	@Autowired
-//	private RedisConnectionFactory redisConnectionFactory;
-	
-	@Autowired
-	private DataSource dataSource;
-	
-	
-	@Override
-	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+	@Bean
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	public SecurityFilterChain authFilterChain(HttpSecurity httpSecurity) throws Exception {
 		
-		//23.36. Configurando os clientes OAuth2 em um banco de dados SQL
-		clients.jdbc(dataSource);
+		//OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(httpSecurity); //27.18. Customizando a página de consentimento do OAuth2
+		//return httpSecurity.build();
+		//return httpSecurity.formLogin(Customizer.withDefaults()).build(); //27.11. Implementando um cliente com o fluxo Authorization Code
 		
-		//=======================================================================================
+		//====================================================================================
+		//27.18. Customizando a página de consentimento do OAuth2
+		OAuth2AuthorizationServerConfigurer<HttpSecurity> authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer<>();
+		RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
 		
-		//22.9. Configurando o fluxo Authorization Server com Password Credentials e Opaque Tokens
+		authorizationServerConfigurer.authorizationEndpoint(customizer -> customizer.consentPage("/oauth2/consent"));
+
+		httpSecurity.requestMatcher(endpointsMatcher)
+					.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
+					.csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
+					.apply(authorizationServerConfigurer);
+		//====================================================================================
 		
-//		clients.inMemory().withClient("algafood-web")
-//						  .secret(passwordEncoder.encode("web123"))
-//						  .authorizedGrantTypes("password", "refresh_token") //22.13. Configurando o Refresh Token Grant Type no Authorization Server
-//						  .scopes("WRITE", "READ")
-//						  .accessTokenValiditySeconds(60 * 60 * 6) //o padrão é 12 horas, mas agora está settado para seis horas de duração
-//						  .refreshTokenValiditySeconds(60 * 24 * 60 * 60) //60 dias | 22.14. Configurando a validade e não reutilização de Refresh Tokens
-//						  
-//						  .and()
-//						  
-//						  .withClient("checktoken")
-//						  .secret(passwordEncoder.encode("check123"))
-//						  
-//						  .and()
-//						  
-//						  .withClient("faturamento")
-//						  .secret(passwordEncoder.encode("faturamento123"))
-//						  .authorizedGrantTypes("client_credentials") //22.16. Configurando o Client Credentials Grant Type no Authorization Server
-//						  .scopes("WRITE", "READ")
-//						  
-//						  .and()
-//						  
-//						  .withClient("foodanalytics")
-//						  .secret(passwordEncoder.encode("")) //food123
-//						  .authorizedGrantTypes("authorization_code") //22.18. Configurando o Authorization Code Grant Type
-//						  .scopes("WRITE", "READ")
-//						  .redirectUris("http://aplicacao_cliente")
-//						  
-//						  .and()
-//						  .withClient("webadmin") //22.21. Configurando o fluxo Implicit Grant Type
-//						  .authorizedGrantTypes("implicit")
-//						  .scopes("WRITE", "READ")
-//						  .redirectUris("http://aplicacao_cliente");
-						  
+		return httpSecurity.formLogin(customizer -> customizer.loginPage("/login")).build(); //27.17. Customizando a página de login do Authorization Server
 	}
 	
 	
-	@Override
-	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-		//22.10. Configurando o endpoint de introspecção de tokens no Authorization Server
-		//security.checkTokenAccess("isAuthenticated()");
-		security.checkTokenAccess("permitAll()")
-				.tokenKeyAccess("permitAll()") //23.11. Extraindo a chave pública no formato PEM
-				.allowFormAuthenticationForClients();
+	@Bean
+	public ProviderSettings providerSettings(AlgaFoodSecurityProperties algaFoodSecurityProperties) {
+		
+		return ProviderSettings.builder().issuer(algaFoodSecurityProperties.getProviderUrl()).build();
 	}
 	
 	
-	@Override
-	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+	@Bean
+	public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder, JdbcOperations jdbcOperations) {
+
+		//27.9. Configurando a geração de Access Token JWT no Authorization Server
 		
-		var enhacerChain = new TokenEnhancerChain(); //23.16. Adicionando claims customizadas no payload do JWT
-		enhacerChain.setTokenEnhancers(Arrays.asList(new JwtCustomClaimsTokenEnhancer(), jwtAccessTokenConverter()));
+		RegisteredClient algafoodbackend = RegisteredClient.withId("1")
+				.clientId("algafood-backend")
+				.clientSecret(passwordEncoder.encode("backend123"))
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+				.scope("READ")
+				.tokenSettings(TokenSettings.builder()
+						.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+//						.accessTokenFormat(OAuth2TokenFormat.REFERENCE) //27.3. Configuração inicial do Authorization Server com Access Token opaco
+						.accessTokenTimeToLive(Duration.ofMinutes(30))
+						.build())
+				.build();
 		
-		endpoints.authenticationManager(authenticationManager)
-				 .userDetailsService(UserDetailsService)
-				 
-				 //24.21. Resolvendo problemas com storage de Authorization Codes
-				 .authorizationCodeServices(new JdbcAuthorizationCodeServices(this.dataSource))
-				 
-				 .reuseRefreshTokens(false) //22.14. Configurando a validade e não reutilização de Refresh Tokens
-				 
-				 .accessTokenConverter(jwtAccessTokenConverter())
-				 
-				 .tokenEnhancer(enhacerChain) //23.16. Adicionando claims customizadas no payload do JWT
-				 
-				 .approvalStore(approvalStore(endpoints.getTokenStore())) //23.13. Revisando o fluxo de aprovação do Authorization Code com JWT
-				 
-				 .tokenGranter(tokenGranter(endpoints)); //22.23. Implementando o suporte a PKCE com o fluxo Authorization Code
-				 
-				 //.tokenStore(redisTokenStore()); //23.2. Configurando o RedisTokenStore
+		//=====================================================================================================
+		//27.11. Implementando um cliente com o fluxo Authorization Code
+		RegisteredClient algafoodweb = RegisteredClient.withId("2")
+				.clientId("algafood-web")
+				.clientSecret(passwordEncoder.encode("web123"))
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN) //27.13. Implementando um cliente com o fluxo Refresh Token
+				.scope("READ")
+				.scope("WRITE")
+				.tokenSettings(TokenSettings.builder()
+						.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+						.accessTokenTimeToLive(Duration.ofMinutes(15))
+						.reuseRefreshTokens(false)
+						.refreshTokenTimeToLive(Duration.ofDays(1))
+						.build())
+				.redirectUri("http://127.0.0.1:8080/authorize")//Essa URL não existe
+				.redirectUri("http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html") //Essa URL existe
+				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+				.build();
+		//=====================================================================================================
+		//27.11. Implementando um cliente com o fluxo Authorization Code
+		RegisteredClient foodanalytics = RegisteredClient.withId("3")
+				.clientId("foodanalytics")
+				.clientSecret(passwordEncoder.encode("web123"))
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+				.scope("READ")
+				.scope("WRITE")
+				.tokenSettings(TokenSettings.builder()
+						.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+						.accessTokenTimeToLive(Duration.ofMinutes(15))
+						.build())
+				.redirectUri("http://www.foodanalytics.local:8082")
+				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
+				.build();
+		
+		//return new InMemoryRegisteredClientRepository(Arrays.asList(algafoodbackend, algafoodweb, foodanalytics));
+		
+		//27.16. Implementado Repository de Clients do OAuth2 via JDBC
+		var repository = new JdbcRegisteredClientRepository(jdbcOperations);
+		
+		repository.save(algafoodbackend);
+		repository.save(algafoodweb);
+		repository.save(foodanalytics);
+		
+		return repository;
 	}
 	
 	
-	private ApprovalStore approvalStore(TokenStore tokenStore) {
+	@Bean
+	public OAuth2AuthorizationService auth2AuthorizationService(JdbcOperations jdbcOperations, RegisteredClientRepository registeredClientRepository) {
 		
-		//23.13. Revisando o fluxo de aprovação do Authorization Code com JWT
+		//27.7. Armazenando autorizações no banco de dados
+		// Para essa aula, foi criado uma nova tabela e o seu script está na pasta de migrations
 		
-		var approvalStore = new TokenApprovalStore();
-		approvalStore.setTokenStore(tokenStore);
+		return new JdbcOAuth2AuthorizationService(jdbcOperations, registeredClientRepository);
+	}
+	
+	
+	@Bean
+	public JWKSource<SecurityContext> jwkSource(JwtKeyStoreProperties jwtKeyStoreProperties) throws Exception {
 		
-		return approvalStore;
+		//27.9. Configurando a geração de Access Token JWT no Authorization Server
+		
+		char[] keyStorePass = jwtKeyStoreProperties.getPassword().toCharArray();
+		String keyPairAlias = jwtKeyStoreProperties.getKeypairAlias();
+		
+		Resource jksLocation = jwtKeyStoreProperties.getJksLocation();
+		InputStream inputStream = jksLocation.getInputStream();
+		KeyStore keyStore = KeyStore.getInstance("JKS");
+		keyStore.load(inputStream, keyStorePass);
+		
+		RSAKey rsaKey = RSAKey.load(keyStore, keyPairAlias, keyStorePass);
+		
+		return new ImmutableJWKSet<>(new JWKSet(rsaKey));
+	}
+	
+	
+	@Bean
+	public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer(UsuarioRepository usuarioRepository) {
+		
+		//27.14. Customizando o token JWT com dados do usuário
+		
+		return context -> {
+			
+			Authentication authentication = context.getPrincipal();
+			
+			if (authentication.getPrincipal() instanceof User) {
+				
+				User user = (User) authentication.getPrincipal();
+				
+				var usuario = usuarioRepository.findByEmail(user.getUsername()).orElseThrow();
+				
+				Set<String> authorities = new HashSet<>();
+				
+				user.getAuthorities().forEach(authority -> authorities.add(authority.getAuthority()));
+				
+				context.getClaims().claim("usuario_id", usuario.getId().toString());
+				context.getClaims().claim("authorities", authorities);
+			}
+		};
 	}
 	
 	
 	
 	@Bean
-	public JWKSet jwkSet() {
+	public OAuth2AuthorizationConsentService consentService(JdbcOperations jdbcOperations, RegisteredClientRepository clientRepository) {
 		
-		//23.45. Implementando o endpoint do JSON Web Key Set (JWKS)
+		//27.18. Customizando a página de consentimento do OAuth2
+		//27.19. Armazenando autorizações de consentimento no banco de dados
 		
-		RSAKey.Builder builder = new RSAKey.Builder((RSAPublicKey) keyPair().getPublic())
-																		    .keyUse(KeyUse.SIGNATURE)
-																		    .algorithm(JWSAlgorithm.RS256)
-																		    .keyID("algafood-key-id");
-		
-		return new JWKSet(builder.build());
+		 return new JdbcOAuth2AuthorizationConsentService(jdbcOperations, clientRepository);
 	}
+	
 	
 	
 	@Bean
-	public JwtAccessTokenConverter jwtAccessTokenConverter() {
-		
-		//23.5. Gerando JWT com chave simétrica (HMAC SHA-256) no Authorization Server
-		
-		var jwtAccessTokenConverter = new JwtAccessTokenConverter();
-		//jwtAccessTokenConverter.setSigningKey("vnqienerq8904h89f4hnwsbrnfq90hr49fn9wrf49fhn9wfh349fgh9vnr4v9h34r9"); //Assinatura simetrica
-		
-		//23.9. Assinando o JWT com RSA SHA-256 (chave assimétrica)
-		
-		//23.41. Juntando o Resource Server com o Authorization Server no mesmo projeto
-		
-		//var jksResource = new ClassPathResource(jwtKeyStoreProperties.getPath());
-		
-		jwtAccessTokenConverter.setKeyPair(keyPair());
-		
-		return jwtAccessTokenConverter;
-	}
-	
-	
-	private KeyPair keyPair() {
-		
-		//23.45. Implementando o endpoint do JSON Web Key Set (JWKS)
-		
-		var keyStorePass = jwtKeyStoreProperties.getPassword();
-		var keyPairAlias = jwtKeyStoreProperties.getKeypairAlias();
-		var keyStoreFactory = new KeyStoreKeyFactory(jwtKeyStoreProperties.getJksLocation(), keyStorePass.toCharArray());
-		
-		return keyStoreFactory.getKeyPair(keyPairAlias);
-	}
-	
-	
-//	private TokenStore redisTokenStore() {
-//		//23.2. Configurando o RedisTokenStore
-//		return new RedisTokenStore(redisConnectionFactory);
-//	}
-	
-	
-	private TokenGranter tokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {
-		
-		//22.23. Implementando o suporte a PKCE com o fluxo Authorization Code
-		
-		var pkceAuthorizationCodeTokenGranter = new PkceAuthorizationCodeTokenGranter(endpoints.getTokenServices(),
-																					  endpoints.getAuthorizationCodeServices(), 
-																					  endpoints.getClientDetailsService(), 
-																					  endpoints.getOAuth2RequestFactory());
-		
-		var granters = Arrays.asList(pkceAuthorizationCodeTokenGranter, endpoints.getTokenGranter());
-		
-		return new CompositeTokenGranter(granters);
+	public OAuth2AuthorizationQueryService auth2AthorizationQueryService(JdbcOperations jdbcOperations, RegisteredClientRepository clientRepository) {
+		//27.20. Criando uma página de listagem dos clientes com consentimentos permitidos
+		return new JdbcOAuth2AthorizationQueryService(jdbcOperations, clientRepository);
 	}
 }
